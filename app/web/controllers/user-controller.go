@@ -36,7 +36,7 @@ func (c *UserControllerImpl) SignUp(w http.ResponseWriter, r *http.Request) {
 	}
 
 	helpers.WriteResponseBody(w, webResponse)
-	http.Redirect(w, r, "/api/users/login", http.StatusOK)
+	http.Redirect(w, r, "/api/login", http.StatusOK)
 }
 
 func (c *UserControllerImpl) Login(w http.ResponseWriter, r *http.Request) {
@@ -45,7 +45,7 @@ func (c *UserControllerImpl) Login(w http.ResponseWriter, r *http.Request) {
 
 	userResponse, loggedIn := c.UserService.Login(r.Context(), userLogin)
 	if loggedIn {
-		helpers.SetUserCookie(w, r, userResponse)
+		helpers.SetUserCookie(w, r, userResponse.ID)
 		webResponse := web.WebResponse{
 			Code:   http.StatusOK,
 			Status: "Ok",

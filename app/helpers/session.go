@@ -3,16 +3,17 @@ package helpers
 import (
 	"net/http"
 	"time"
-
-	"github.com/hiboedi/go-store-backend/app/web/models"
 )
 
-var userSession = "user-session"
+const (
+	UserSession  = "user_session"
+	StoreSession = "store_session"
+)
 
-func SetUserCookie(w http.ResponseWriter, r *http.Request, user models.UserLoginResponse) {
+func SetCookie(w http.ResponseWriter, r *http.Request, sessionType string, value string) {
 	cookie := http.Cookie{
-		Name:     userSession,
-		Value:    user.ID,
+		Name:     sessionType,
+		Value:    value,
 		Expires:  time.Now().Add(24 * time.Hour),
 		Path:     "/",
 		HttpOnly: true,
@@ -21,8 +22,8 @@ func SetUserCookie(w http.ResponseWriter, r *http.Request, user models.UserLogin
 	http.SetCookie(w, &cookie)
 }
 
-func GetCookie(w http.ResponseWriter, r *http.Request) (*http.Cookie, error) {
-	cookie, err := r.Cookie(userSession)
+func GetCookie(w http.ResponseWriter, r *http.Request, sessionType string) (*http.Cookie, error) {
+	cookie, err := r.Cookie(sessionType)
 	if err != nil {
 		if err == http.ErrNoCookie {
 			w.Write([]byte("no cookie found"))
@@ -34,9 +35,9 @@ func GetCookie(w http.ResponseWriter, r *http.Request) (*http.Cookie, error) {
 	return cookie, nil
 }
 
-func DeleteCookieHandler(w http.ResponseWriter, r *http.Request) {
+func DeleteCookieHandler(w http.ResponseWriter, r *http.Request, sessionType string) {
 	cookie := http.Cookie{
-		Name:     userSession,
+		Name:     sessionType,
 		Value:    "",
 		Path:     "/",
 		Expires:  time.Unix(0, 0),
@@ -46,4 +47,16 @@ func DeleteCookieHandler(w http.ResponseWriter, r *http.Request) {
 	http.SetCookie(w, &cookie)
 
 	w.Write([]byte("cookie has been deleted"))
+}
+
+func SetUserCookie(w http.ResponseWriter, r *http.Request, user string) {
+	SetCookie(w, r, UserSession, user)
+}
+
+func GetUserCookie(w http.ResponseWriter, r *http.Request) (*http.Cookie, error) {
+	return GetCookie(w, r, UserSession)
+}
+
+func DeleteUserCookieHandler(w http.ResponseWriter, r *http.Request) {
+	DeleteCookieHandler(w, r, UserSession)
 }

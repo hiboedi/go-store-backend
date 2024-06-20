@@ -56,11 +56,11 @@ func ToUserReponse(user User) UserResponse {
 	}
 }
 
-func ToUserResponses(users []User) []UserResponse {
-	var responses []UserResponse
+// func ToUserResponses(users []User) []UserResponse {
+// 	var responses []UserResponse
 
-	for _, user := range users {
-		responses = append(responses, ToUserReponse(user))
-	}
-	return responses
-}
+// 	for _, user := range users {
+// 		responses = append(responses, ToUserReponse(user))
+// 	}
+// 	return responses
+// }
