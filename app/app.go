@@ -18,35 +18,64 @@ func Start() {
 	db := database.InitializeDB()
 	validate := validator.New()
 
+	// Initialize repositories
 	userRepository := repositories.NewUserRepository()
-	userService := services.NewUserService(userRepository, db, validate)
-	userController := controllers.NewUserController(userService)
-
 	storeRepository := repositories.NewStoreRepository()
-	storeService := services.NewStoreService(storeRepository, db, validate)
-	storeController := controllers.NewStoreController(storeService)
-
 	billboardRepository := repositories.NewBillboardRepository()
-	billboardService := services.NewBillboardService(billboardRepository, db, validate)
-	billboardController := controllers.NewBillboardController(billboardService)
-
 	categoryRepository := repositories.NewCategoryRepository()
-	categoryservice := services.NewCategoryService(categoryRepository, db, validate)
-	categoryController := controllers.NewCategoryController(categoryservice)
-
 	colorRepository := repositories.NewColorRepository()
-	colorService := services.NewColorService(colorRepository, db, validate)
-	colorController := controllers.NewColorController(colorService)
+	sizeRepository := repositories.NewSizeRepository()
+	productRepository := repositories.NewProductRepository()
+	imageRepository := repositories.NewImageRepository()
+	orderRepository := repositories.NewOrderRepository()
+	orderItemRepository := repositories.NewOrderItemRepository()
 
-	router := router.RouterInit(userController, storeController, billboardController, categoryController, colorController)
+	// Initialize services
+	userService := services.NewUserService(userRepository, db, validate)
+	storeService := services.NewStoreService(storeRepository, db, validate)
+	billboardService := services.NewBillboardService(billboardRepository, db, validate)
+	categoryService := services.NewCategoryService(categoryRepository, db, validate)
+	colorService := services.NewColorService(colorRepository, db, validate)
+	sizeService := services.NewSizeService(sizeRepository, db, validate)
+	imageService := services.NewImageService(imageRepository, db, validate)
+	orderItemService := services.NewOrderItemService(orderItemRepository, db, validate)
+	productService := services.NewProductService(productRepository, imageService, db, validate)
+	orderService := services.NewOrderService(orderRepository, orderItemService, db, validate)
+
+	// Initialize controllers
+	userController := controllers.NewUserController(userService)
+	storeController := controllers.NewStoreController(storeService)
+	billboardController := controllers.NewBillboardController(billboardService)
+	categoryController := controllers.NewCategoryController(categoryService)
+	colorController := controllers.NewColorController(colorService)
+	sizeController := controllers.NewSizeController(sizeService)
+	productController := controllers.NewProductController(productService)
+	orderController := controllers.NewOrderController(orderService)
+
+	// Initialize router
+	router := router.RouterInit(
+		userController,
+		storeController,
+		billboardController,
+		categoryController,
+		colorController,
+		sizeController,
+		productController,
+		orderController,
+	)
+
+	// Perform database migration
 	database.DBMigrate()
 
+	// Initialize middleware and server
+	authRouter := middleware.NewAuthMiddleware(router)
 	server := http.Server{
 		Addr:    "localhost:8000",
-		Handler: middleware.NewAuthMiddleware(router),
+		Handler: authRouter,
 	}
-	fmt.Println("starting on port :8000")
 
+	// Start the server
+	fmt.Println("Starting server on port :8000")
 	err := server.ListenAndServe()
 	helpers.PanicIfError(err)
 }

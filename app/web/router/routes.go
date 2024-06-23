@@ -6,7 +6,16 @@ import (
 	"github.com/hiboedi/go-store-backend/app/web/controllers"
 )
 
-func RouterInit(userController controllers.UserController, storeController controllers.StoreController, billboardController controllers.BillboardController, categoryController controllers.CategoryController, colorController controllers.CategoryController) *mux.Router {
+func RouterInit(
+	userController controllers.UserController,
+	storeController controllers.StoreController,
+	billboardController controllers.BillboardController,
+	categoryController controllers.CategoryController,
+	colorController controllers.CategoryController,
+	sizeController controllers.SizeController,
+	productController controllers.ProductController,
+	orderController controllers.ProductController,
+) *mux.Router {
 	router := mux.NewRouter()
 
 	router.HandleFunc("/api/login", userController.Login).Methods("POST")
