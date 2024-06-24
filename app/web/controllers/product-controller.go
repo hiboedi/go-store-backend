@@ -32,6 +32,10 @@ func (c *ProductControllerImpl) Create(w http.ResponseWriter, r *http.Request) {
 	productCreateRequest := models.ProductCreate{}
 	helpers.ToRequestBody(r, &productCreateRequest)
 
+	vars := mux.Vars(r)
+	storeId := vars["storeId"]
+	productCreateRequest.StoreID = storeId
+
 	productResponse := c.ProductService.Create(r.Context(), productCreateRequest)
 	webResponse := web.WebResponse{
 		Code:   http.StatusOK,
@@ -48,9 +52,11 @@ func (c *ProductControllerImpl) Update(w http.ResponseWriter, r *http.Request) {
 
 	vars := mux.Vars(r)
 	productId := vars["productId"]
-	productUpdateRequest.ID = productId
 
-	productResponse := c.ProductService.Update(r.Context(), productUpdateRequest)
+	storeId := vars["storeId"]
+	productUpdateRequest.StoreID = storeId
+
+	productResponse := c.ProductService.Update(r.Context(), productUpdateRequest, productId)
 	webResponse := web.WebResponse{
 		Code:   http.StatusOK,
 		Status: "Ok",

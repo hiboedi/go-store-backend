@@ -52,9 +52,8 @@ func (c *ImageControllerImpl) Update(w http.ResponseWriter, r *http.Request) {
 
 	vars := mux.Vars(r)
 	imageId := vars["imageId"]
-	imageUpdateRequest.ID = imageId
 
-	imageResponse := c.ImageService.Update(r.Context(), imageUpdateRequest)
+	imageResponse := c.ImageService.Update(r.Context(), imageUpdateRequest, imageId)
 	webResponse := web.WebResponse{
 		Code:   http.StatusOK,
 		Status: "Ok",

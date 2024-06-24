@@ -19,7 +19,7 @@ type ColorServiceImpl struct {
 
 type ColorService interface {
 	Create(ctx context.Context, request models.ColorCreate) models.ColorResponseHiddenStore
-	Update(ctx context.Context, request models.ColorUpdate) models.ColorResponseHiddenStore
+	Update(ctx context.Context, request models.ColorUpdate, colorId string) models.ColorResponseHiddenStore
 	Delete(ctx context.Context, colorId string)
 	FindById(ctx context.Context, colorId string) models.ColorResponse
 	FindAll(ctx context.Context) []models.ColorResponse
@@ -52,14 +52,14 @@ func (s *ColorServiceImpl) Create(ctx context.Context, request models.ColorCreat
 	return models.ToColorResponseHiddenStore(data)
 }
 
-func (s *ColorServiceImpl) Update(ctx context.Context, request models.ColorUpdate) models.ColorResponseHiddenStore {
+func (s *ColorServiceImpl) Update(ctx context.Context, request models.ColorUpdate, colorId string) models.ColorResponseHiddenStore {
 	err := s.Validate.Struct(request)
 	helpers.PanicIfError(err)
 
 	tx := s.DB.Begin()
 	defer helpers.CommitOrRollback(tx)
 
-	color, err := s.ColorRepository.GetColorById(ctx, tx, request.ID)
+	color, err := s.ColorRepository.GetColorById(ctx, tx, colorId)
 	if err != nil {
 		panic(exceptions.NewNotFoundError(err.Error()))
 	}

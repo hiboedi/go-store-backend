@@ -52,9 +52,8 @@ func (c *SizeControllerImpl) Update(w http.ResponseWriter, r *http.Request) {
 
 	vars := mux.Vars(r)
 	sizeId := vars["sizeId"]
-	sizeUpdateRequest.ID = sizeId
 
-	sizeResponse := c.SizeService.Update(r.Context(), sizeUpdateRequest)
+	sizeResponse := c.SizeService.Update(r.Context(), sizeUpdateRequest, sizeId)
 	webResponse := web.WebResponse{
 		Code:   http.StatusOK,
 		Status: "Ok",

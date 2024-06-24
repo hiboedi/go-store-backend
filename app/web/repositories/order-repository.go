@@ -25,13 +25,22 @@ func NewOrderRepository() OrderRepository {
 }
 
 func (r *OrderRepositoryImpl) CreateOrder(ctx context.Context, db *gorm.DB, order models.Order) (models.Order, error) {
+	discountAmount := helpers.GetDiscountAmount(order.BaseTotalPrice)
+	taxAmount := helpers.GetTaxAmount(order.BaseTotalPrice)
+
 	orderModel := models.Order{
-		ID:         uuid.New().String(),
-		StoreID:    order.StoreID,
-		OrderItems: order.OrderItems,
-		IsPaid:     order.IsPaid,
-		Phone:      order.Phone,
-		Address:    order.Address,
+		ID:              uuid.New().String(),
+		StoreID:         order.StoreID,
+		OrderItems:      order.OrderItems,
+		IsPaid:          order.IsPaid,
+		Phone:           order.Phone,
+		Address:         order.Address,
+		BaseTotalPrice:  order.BaseTotalPrice,
+		DiscountAmount:  discountAmount,
+		DiscountPercent: float64(helpers.DiscountPercent),
+		TaxAmount:       taxAmount,
+		TaxPercent:      float64(helpers.TaxPercent),
+		GrandTotaPrice:  order.BaseTotalPrice - taxAmount - discountAmount,
 	}
 
 	err := db.WithContext(ctx).Create(&orderModel).Error
@@ -41,11 +50,22 @@ func (r *OrderRepositoryImpl) CreateOrder(ctx context.Context, db *gorm.DB, orde
 }
 
 func (r *OrderRepositoryImpl) UpdateOrder(ctx context.Context, db *gorm.DB, order models.Order) (models.Order, error) {
+
 	orderModel := models.Order{
-		OrderItems: order.OrderItems,
-		IsPaid:     order.IsPaid,
-		Phone:      order.Phone,
-		Address:    order.Address,
+		ID:              order.ID,
+		StoreID:         order.StoreID,
+		OrderItems:      order.OrderItems,
+		IsPaid:          order.IsPaid,
+		Phone:           order.Phone,
+		Address:         order.Address,
+		BaseTotalPrice:  order.BaseTotalPrice,
+		DiscountAmount:  order.DiscountAmount,
+		DiscountPercent: order.DiscountPercent,
+		TaxPercent:      order.TaxPercent,
+		TaxAmount:       order.TaxAmount,
+		GrandTotaPrice:  order.GrandTotaPrice,
+		CreatedAt:       order.CreatedAt,
+		UpdatedAt:       order.UpdatedAt,
 	}
 
 	err := db.WithContext(ctx).Model(&models.Order{}).Where("id = ?", order.ID).Updates(&orderModel).Error

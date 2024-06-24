@@ -40,13 +40,17 @@ func (r *BillboardRepositoryImpl) CreateBillboard(ctx context.Context, db *gorm.
 }
 
 func (r *BillboardRepositoryImpl) UpdateBillboard(ctx context.Context, db *gorm.DB, billboard models.Billboard) (models.Billboard, error) {
+
 	billboardModel := models.Billboard{
-		Label:    billboard.Label,
-		ImageURL: billboard.ImageURL,
+		ID:        billboard.ID,
+		Label:     billboard.Label,
+		StoreID:   billboard.StoreID,
+		ImageURL:  billboard.ImageURL,
+		CreatedAt: billboard.CreatedAt,
+		UpdatedAt: billboard.UpdatedAt,
 	}
 
 	err := db.WithContext(ctx).Model(&models.Billboard{}).Where("id = ?", billboard.ID).Updates(&billboardModel).Error
-
 	helpers.PanicIfError(err)
 
 	return billboardModel, nil

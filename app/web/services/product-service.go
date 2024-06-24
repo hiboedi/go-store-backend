@@ -19,8 +19,8 @@ type ProductServiceImpl struct {
 }
 
 type ProductService interface {
-	Create(ctx context.Context, request models.ProductCreate) models.ProductResponse
-	Update(ctx context.Context, request models.ProductUpdate) models.ProductResponse
+	Create(ctx context.Context, request models.ProductCreate) models.ProductResponseHiddenStore
+	Update(ctx context.Context, request models.ProductUpdate, productId string) models.ProductResponseHiddenStore
 	Delete(ctx context.Context, productId string)
 	FindById(ctx context.Context, productId string) models.ProductResponse
 	FindAll(ctx context.Context) []models.ProductResponse
@@ -35,7 +35,7 @@ func NewProductService(productRepo repositories.ProductRepository, imageService 
 	}
 }
 
-func (s *ProductServiceImpl) Create(ctx context.Context, request models.ProductCreate) models.ProductResponse {
+func (s *ProductServiceImpl) Create(ctx context.Context, request models.ProductCreate) models.ProductResponseHiddenStore {
 	err := s.Validate.Struct(request)
 	helpers.PanicIfError(err)
 
@@ -46,6 +46,7 @@ func (s *ProductServiceImpl) Create(ctx context.Context, request models.ProductC
 		StoreID:    request.StoreID,
 		CategoryID: request.CategoryID,
 		Name:       request.Name,
+		Stock:      request.Stock,
 		Price:      request.Price,
 		IsFeatured: request.IsFeatured,
 		IsArchived: request.IsArchived,
@@ -58,23 +59,23 @@ func (s *ProductServiceImpl) Create(ctx context.Context, request models.ProductC
 	data, err := s.ProductRepository.CreateProduct(ctx, tx, product)
 	helpers.PanicIfError(err)
 
-	return models.ToProductResponse(data)
+	return models.ToProductResponseHiddenStore(data)
 }
 
-func (s *ProductServiceImpl) Update(ctx context.Context, request models.ProductUpdate) models.ProductResponse {
+func (s *ProductServiceImpl) Update(ctx context.Context, request models.ProductUpdate, productId string) models.ProductResponseHiddenStore {
 	err := s.Validate.Struct(request)
 	helpers.PanicIfError(err)
 
 	tx := s.DB.Begin()
 	defer helpers.CommitOrRollback(tx)
 
-	product, err := s.ProductRepository.GetProductById(ctx, tx, request.ID)
+	product, err := s.ProductRepository.GetProductById(ctx, tx, productId)
 	if err != nil {
 		panic(exceptions.NewNotFoundError(err.Error()))
 	}
 
-	product.StoreID = request.StoreID
 	product.CategoryID = request.CategoryID
+	product.StoreID = request.StoreID
 	product.Name = request.Name
 	product.Price = request.Price
 	product.IsFeatured = request.IsFeatured
@@ -87,7 +88,7 @@ func (s *ProductServiceImpl) Update(ctx context.Context, request models.ProductU
 	data, err := s.ProductRepository.UpdateProduct(ctx, tx, product)
 	helpers.PanicIfError(err)
 
-	return models.ToProductResponse(data)
+	return models.ToProductResponseHiddenStore(data)
 }
 
 func (s *ProductServiceImpl) Delete(ctx context.Context, productId string) {

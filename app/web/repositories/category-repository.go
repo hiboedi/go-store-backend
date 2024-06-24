@@ -40,12 +40,19 @@ func (r *CategoryRepositoryImpl) CreateCategory(ctx context.Context, db *gorm.DB
 
 func (r *CategoryRepositoryImpl) UpdateCategory(ctx context.Context, db *gorm.DB, category models.Category) (models.Category, error) {
 	categoryModel := models.Category{
+		ID:          category.ID,
+		StoreID:     category.StoreID,
 		BillboardID: category.BillboardID,
 		Name:        category.Name,
+		CreatedAt:   category.CreatedAt,
+		UpdatedAt:   category.UpdatedAt,
 	}
 
 	err := db.WithContext(ctx).Model(&models.Category{}).Where("id = ?", category.ID).Updates(&categoryModel).Error
 	helpers.PanicIfError(err)
+
+	categoryModel.ID = category.ID
+	categoryModel.StoreID = category.StoreID
 
 	return categoryModel, nil
 }

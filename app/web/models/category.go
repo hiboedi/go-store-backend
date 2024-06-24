@@ -36,23 +36,14 @@ type CategoryResponseHiddenStore struct {
 }
 
 type CategoryCreate struct {
-	ID          string    `json:"id"`
-	StoreID     string    `json:"store_id"`
-	BillboardID string    `json:"billboard_id"`
-	Name        string    `json:"name"`
-	Products    []Product `json:"products"`
-	CreatedAt   time.Time `json:"created_at"`
-	UpdatedAt   time.Time `json:"updated_at"`
+	StoreID     string `json:"store_id"`
+	BillboardID string `json:"billboard_id" validate:"required"`
+	Name        string `json:"name" validate:"required,min=4,max=50"`
 }
 
 type CategoryUpdate struct {
-	ID          string    `json:"id"`
-	StoreID     string    `json:"store_id"`
-	BillboardID string    `json:"billboard_id"`
-	Name        string    `json:"name"`
-	Products    []Product `json:"products"`
-	CreatedAt   time.Time `json:"created_at"`
-	UpdatedAt   time.Time `json:"updated_at"`
+	BillboardID string `json:"billboard_id" validate:"required"`
+	Name        string `json:"name" validate:"required,min=4,max=50"`
 }
 
 func ToCategoryResponse(category Category) CategoryResponse {

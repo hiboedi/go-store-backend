@@ -19,7 +19,7 @@ type OrderItemServiceImpl struct {
 
 type OrderItemService interface {
 	Create(ctx context.Context, request models.OrderItemCreate) models.OrderItemResponse
-	Update(ctx context.Context, request models.OrderItemUpdate) models.OrderItemResponse
+	Update(ctx context.Context, request models.OrderItemUpdate, orderItemId string) models.OrderItemResponse
 	Delete(ctx context.Context, orderItemId string)
 	FindByID(ctx context.Context, orderItemId string) models.OrderItemResponse
 	FindAllByOrderID(ctx context.Context, orderId string) []models.OrderItemResponse
@@ -53,14 +53,14 @@ func (s *OrderItemServiceImpl) Create(ctx context.Context, request models.OrderI
 	return models.ToOrderItemResponse(data)
 }
 
-func (s *OrderItemServiceImpl) Update(ctx context.Context, request models.OrderItemUpdate) models.OrderItemResponse {
+func (s *OrderItemServiceImpl) Update(ctx context.Context, request models.OrderItemUpdate, orderItemId string) models.OrderItemResponse {
 	err := s.Validate.Struct(request)
 	helpers.PanicIfError(err)
 
 	tx := s.DB.Begin()
 	defer helpers.CommitOrRollback(tx)
 
-	orderItem, err := s.OrderItemRepository.GetOrderItemById(ctx, tx, request.ID)
+	orderItem, err := s.OrderItemRepository.GetOrderItemById(ctx, tx, orderItemId)
 	if err != nil {
 		panic(exceptions.NewNotFoundError(err.Error()))
 	}

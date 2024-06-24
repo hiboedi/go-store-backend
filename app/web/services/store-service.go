@@ -13,7 +13,7 @@ import (
 
 type StoreService interface {
 	Create(ctx context.Context, request models.StoreCreate) models.StoreResponse
-	Update(ctx context.Context, request models.StoreUpdate) models.StoreResponse
+	Update(ctx context.Context, request models.StoreUpdate, storeId string) models.StoreResponse
 	Delete(ctx context.Context, storeId string)
 	FindById(ctx context.Context, storeId string) models.StoreResponse
 	FindAll(ctx context.Context) []models.StoreResponse
@@ -51,25 +51,19 @@ func (s *StoreServiceImpl) Create(ctx context.Context, request models.StoreCreat
 	return models.ToStoreResponse(data)
 }
 
-func (s *StoreServiceImpl) Update(ctx context.Context, request models.StoreUpdate) models.StoreResponse {
+func (s *StoreServiceImpl) Update(ctx context.Context, request models.StoreUpdate, storeId string) models.StoreResponse {
 	err := s.Validate.Struct(request)
 	helpers.PanicIfError(err)
 
 	tx := s.DB.Begin()
 	defer helpers.CommitOrRollback(tx)
 
-	store, err := s.StoreRepository.GetStoreById(ctx, tx, request.ID)
+	store, err := s.StoreRepository.GetStoreById(ctx, tx, storeId)
 	if err != nil {
 		panic(exceptions.NewNotFoundError(err.Error()))
 	}
 
 	store.Name = request.Name
-	// store.Billboards = request.Billboards
-	// store.Categories = request.Categories
-	// store.Sizes = request.Sizes
-	// store.Colors = request.Colors
-	// store.Products = request.Products
-	// store.Orders = request.Orders
 
 	data, err := s.StoreRepository.UpdateStore(ctx, tx, store)
 	helpers.PanicIfError(err)

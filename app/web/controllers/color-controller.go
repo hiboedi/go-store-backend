@@ -34,7 +34,7 @@ func (c *ColorControllerImpl) Create(w http.ResponseWriter, r *http.Request) {
 
 	vars := mux.Vars(r)
 	storeId := vars["storeId"]
-	colorCreateRequest.ID = storeId
+	colorCreateRequest.StoreID = storeId
 
 	colorResponse := c.ColorService.Create(r.Context(), colorCreateRequest)
 	webResponse := web.WebResponse{
@@ -52,9 +52,8 @@ func (c *ColorControllerImpl) Update(w http.ResponseWriter, r *http.Request) {
 
 	vars := mux.Vars(r)
 	colorId := vars["colorId"]
-	colorUpdateRequest.ID = colorId
 
-	colorResponse := c.ColorService.Update(r.Context(), colorUpdateRequest)
+	colorResponse := c.ColorService.Update(r.Context(), colorUpdateRequest, colorId)
 	webResponse := web.WebResponse{
 		Code:   http.StatusOK,
 		Status: "Ok",

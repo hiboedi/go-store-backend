@@ -39,13 +39,11 @@ func (r *StoreRepositoryImpl) CreateStore(ctx context.Context, db *gorm.DB, stor
 
 func (r *StoreRepositoryImpl) UpdateStore(ctx context.Context, db *gorm.DB, store models.Store) (models.Store, error) {
 	storeModel := models.Store{
-		Name: store.Name,
-		// Billboards: store.Billboards,
-		// Categories: store.Categories,
-		// Sizes:      store.Sizes,
-		// Colors:     store.Colors,
-		// Products:   store.Products,
-		// Orders:     store.Orders,
+		ID:        store.ID,
+		Name:      store.Name,
+		UserID:    store.UserID,
+		CreatedAt: store.CreatedAt,
+		UpdatedAt: store.UpdatedAt,
 	}
 
 	err := db.WithContext(ctx).Model(&models.Store{}).Where("id = ?", store.ID).Updates(&storeModel).Error

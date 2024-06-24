@@ -19,7 +19,7 @@ type CategoryServiceImpl struct {
 
 type CategoryService interface {
 	Create(ctx context.Context, request models.CategoryCreate) models.CategoryResponse
-	Update(ctx context.Context, request models.CategoryUpdate) models.CategoryResponse
+	Update(ctx context.Context, request models.CategoryUpdate, categoryId string) models.CategoryResponse
 	Delete(ctx context.Context, categoryId string)
 	FindById(ctx context.Context, categoryId string) models.CategoryResponse
 	FindAll(ctx context.Context) []models.CategoryResponse
@@ -52,14 +52,14 @@ func (s *CategoryServiceImpl) Create(ctx context.Context, request models.Categor
 	return models.ToCategoryResponse(data)
 }
 
-func (s *CategoryServiceImpl) Update(ctx context.Context, request models.CategoryUpdate) models.CategoryResponse {
+func (s *CategoryServiceImpl) Update(ctx context.Context, request models.CategoryUpdate, categoryId string) models.CategoryResponse {
 	err := s.Validate.Struct(request)
 	helpers.PanicIfError(err)
 
 	tx := s.DB.Begin()
 	defer helpers.CommitOrRollback(tx)
 
-	category, err := s.CategoryRepository.GetCategoryById(ctx, tx, request.ID)
+	category, err := s.CategoryRepository.GetCategoryById(ctx, tx, categoryId)
 	if err != nil {
 		panic(exceptions.NewNotFoundError(err.Error()))
 	}

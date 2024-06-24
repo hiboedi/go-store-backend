@@ -41,10 +41,13 @@ func (r *OrderItemRepositoryImpl) CreateOrderItem(ctx context.Context, db *gorm.
 
 func (r *OrderItemRepositoryImpl) UpdateOrderItem(ctx context.Context, db *gorm.DB, orderItem models.OrderItem) (models.OrderItem, error) {
 	orderItemModel := models.OrderItem{
+		ID:        orderItem.ID,
 		OrderID:   orderItem.OrderID,
 		ProductID: orderItem.ProductID,
 		Quantity:  orderItem.Quantity,
 		Price:     orderItem.Price,
+		CreatedAt: orderItem.CreatedAt,
+		UpdatedAt: orderItem.UpdatedAt,
 	}
 
 	err := db.WithContext(ctx).Model(&models.OrderItem{}).Where("id = ?", orderItem.ID).Updates(&orderItemModel).Error

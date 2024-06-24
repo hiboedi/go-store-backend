@@ -7,7 +7,7 @@ import (
 type Billboard struct {
 	ID         string     `json:"id" gorm:"not null;uniqueIndex;primary_key"`
 	StoreID    string     `json:"store_id" gorm:"not null;index"`
-	Store      Store      `json:"-"` // Jangan sertakan field `Store` dalam JSON
+	Store      Store      `json:"-"`
 	Label      string     `json:"label" gorm:"not null"`
 	ImageURL   string     `json:"image_url" gorm:"not null"`
 	Categories []Category `gorm:"foreignKey:BillboardID" json:"categories"`
@@ -37,25 +37,14 @@ type BillboardResponseHiddenStore struct {
 }
 
 type BillboardCreate struct {
-	ID         string     `json:"id"`
-	StoreID    string     `json:"store_id"`
-	Store      Store      `json:"store"`
-	Label      string     `json:"label"`
-	ImageURL   string     `json:"image_url"`
-	Categories []Category `json:"categories"`
-	CreatedAt  time.Time  `json:"created_at"`
-	UpdatedAt  time.Time  `json:"updated_at"`
+	StoreID  string `json:"store_id"`
+	Label    string `json:"label" validate:"required,min=4,max=50"`
+	ImageURL string `json:"image_url" validate:"required"`
 }
 
 type BillboardUpdate struct {
-	ID         string     `json:"id"`
-	StoreID    string     `json:"store_id"`
-	Store      Store      `json:"store"`
-	Label      string     `json:"label"`
-	ImageURL   string     `json:"image_url"`
-	Categories []Category `json:"categories"`
-	CreatedAt  time.Time  `json:"created_at"`
-	UpdatedAt  time.Time  `json:"updated_at"`
+	Label    string `json:"label" validate:"required,min=4,max=50"`
+	ImageURL string `json:"image_url" validate:"required"`
 }
 
 func ToBillboardReponse(billboard Billboard) BillboardResponse {

@@ -34,14 +34,12 @@ type UserCreate struct {
 }
 
 type UserUpdate struct {
-	ID       string `validate:"required"`
 	Name     string `validate:"required,min=4,max=50"`
 	Email    string `validate:"required,email"`
 	Password string `validate:"required,min=6,max=50"`
 }
 
 type UserLogin struct {
-	ID       string
 	Email    string `validate:"required,email"`
 	Password string `validate:"required"`
 }

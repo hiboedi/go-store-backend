@@ -40,8 +40,12 @@ func (r *SizeRepositoryImpl) CreateSize(ctx context.Context, db *gorm.DB, size m
 
 func (r *SizeRepositoryImpl) UpdateSize(ctx context.Context, db *gorm.DB, size models.Size) (models.Size, error) {
 	sizeModel := models.Size{
-		Name:  size.Name,
-		Value: size.Value,
+		ID:        size.ID,
+		StoreID:   size.StoreID,
+		Name:      size.Name,
+		Value:     size.Value,
+		CreatedAt: size.CreatedAt,
+		UpdatedAt: size.UpdatedAt,
 	}
 
 	err := db.WithContext(ctx).Model(&models.Size{}).Where("id = ?", size.ID).Updates(&sizeModel).Error

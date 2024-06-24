@@ -52,9 +52,8 @@ func (c *BillboardControllerImpl) Update(w http.ResponseWriter, r *http.Request)
 
 	vars := mux.Vars(r)
 	billboardId := vars["billboardId"]
-	billboardUpdateRequest.ID = billboardId
 
-	billboardResponse := c.BillboardService.Update(r.Context(), billboardUpdateRequest)
+	billboardResponse := c.BillboardService.Update(r.Context(), billboardUpdateRequest, billboardId)
 	webResponse := web.WebResponse{
 		Code:   http.StatusOK,
 		Status: "Ok",

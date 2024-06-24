@@ -20,7 +20,7 @@ type OrderServiceImpl struct {
 
 type OrderService interface {
 	Create(ctx context.Context, request models.OrderCreate) models.OrderResponseHiddenStore
-	Update(ctx context.Context, request models.OrderUpdate) models.OrderResponseHiddenStore
+	Update(ctx context.Context, request models.OrderUpdate, orderId string) models.OrderResponseHiddenStore
 	Delete(ctx context.Context, orderId string)
 	FindById(ctx context.Context, orderId string) models.OrderResponse
 	FindAll(ctx context.Context) []models.OrderResponse
@@ -56,22 +56,19 @@ func (s *OrderServiceImpl) Create(ctx context.Context, request models.OrderCreat
 	return models.ToOrderResponseHiddenStore(data)
 }
 
-func (s *OrderServiceImpl) Update(ctx context.Context, request models.OrderUpdate) models.OrderResponseHiddenStore {
+func (s *OrderServiceImpl) Update(ctx context.Context, request models.OrderUpdate, orderId string) models.OrderResponseHiddenStore {
 	err := s.Validate.Struct(request)
 	helpers.PanicIfError(err)
 
 	tx := s.DB.Begin()
 	defer helpers.CommitOrRollback(tx)
 
-	order, err := s.OrderRepository.GetOrderById(ctx, tx, request.ID)
+	order, err := s.OrderRepository.GetOrderById(ctx, tx, orderId)
 	if err != nil {
 		panic(exceptions.NewNotFoundError(err.Error()))
 	}
 
-	order.OrderItems = request.OrderItems
 	order.IsPaid = request.IsPaid
-	order.Phone = request.Phone
-	order.Address = request.Address
 
 	data, err := s.OrderRepository.UpdateOrder(ctx, tx, order)
 	helpers.PanicIfError(err)

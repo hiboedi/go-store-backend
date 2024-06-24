@@ -41,8 +41,12 @@ func (r *ColorRepositoryImpl) CreateColor(ctx context.Context, db *gorm.DB, colo
 func (r *ColorRepositoryImpl) UpdateColor(ctx context.Context, db *gorm.DB, color models.Color) (models.Color, error) {
 
 	colorModel := models.Color{
-		Name:  color.Name,
-		Value: color.Value,
+		ID:        color.ID,
+		Name:      color.Name,
+		StoreID:   color.StoreID,
+		Value:     color.Value,
+		CreatedAt: color.CreatedAt,
+		UpdatedAt: color.UpdatedAt,
 	}
 	err := db.WithContext(ctx).Model(&models.Color{}).Where("id = ?", color.ID).Updates(&colorModel).Error
 	helpers.PanicIfError(err)

@@ -19,7 +19,7 @@ type ImageServiceImpl struct {
 
 type ImageService interface {
 	Create(ctx context.Context, request models.ImageCreate) models.ImageResponseHiddenProduct
-	Update(ctx context.Context, request models.ImageUpdate) models.ImageResponseHiddenProduct
+	Update(ctx context.Context, request models.ImageUpdate, imageId string) models.ImageResponseHiddenProduct
 	Delete(ctx context.Context, imageId string)
 	FindById(ctx context.Context, imageId string) models.ImageResponse
 	FindAll(ctx context.Context) []models.ImageResponse
@@ -51,14 +51,14 @@ func (s *ImageServiceImpl) Create(ctx context.Context, request models.ImageCreat
 	return models.ToImageResponseHiddenProduct(data)
 }
 
-func (s *ImageServiceImpl) Update(ctx context.Context, request models.ImageUpdate) models.ImageResponseHiddenProduct {
+func (s *ImageServiceImpl) Update(ctx context.Context, request models.ImageUpdate, imageId string) models.ImageResponseHiddenProduct {
 	err := s.Validate.Struct(request)
 	helpers.PanicIfError(err)
 
 	tx := s.DB.Begin()
 	defer helpers.CommitOrRollback(tx)
 
-	image, err := s.ImageRepository.GetImageById(ctx, tx, request.ID)
+	image, err := s.ImageRepository.GetImageById(ctx, tx, imageId)
 	if err != nil {
 		panic(exceptions.NewNotFoundError(err.Error()))
 	}

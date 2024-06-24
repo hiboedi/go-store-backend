@@ -47,7 +47,6 @@ type SizeCreate struct {
 }
 
 type SizeUpdate struct {
-	ID        string    `json:"id"`
 	StoreID   string    `json:"store_id"`
 	Name      string    `json:"name"`
 	Value     string    `json:"value"`

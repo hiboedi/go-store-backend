@@ -20,6 +20,7 @@ type ColorResponse struct {
 	StoreID   string    `json:"store_id"`
 	Name      string    `json:"name"`
 	Value     string    `json:"value"`
+	Products  []Product `json:"products"`
 	CreatedAt time.Time `json:"created_at"`
 	UpdatedAt time.Time `json:"updated_at"`
 }
@@ -29,26 +30,20 @@ type ColorResponseHiddenStore struct {
 	StoreID   string    `json:"store_id"`
 	Name      string    `json:"name"`
 	Value     string    `json:"value"`
+	Products  []Product `json:"products"`
 	CreatedAt time.Time `json:"created_at"`
 	UpdatedAt time.Time `json:"updated_at"`
 }
 
 type ColorCreate struct {
-	ID        string    `json:"id"`
-	StoreID   string    `json:"store_id"`
-	Name      string    `json:"name"`
-	Value     string    `json:"value"`
-	CreatedAt time.Time `json:"created_at"`
-	UpdatedAt time.Time `json:"updated_at"`
+	StoreID string `json:"store_id"`
+	Name    string `json:"name" validate:"required"`
+	Value   string `json:"value" validate:"required"`
 }
 
 type ColorUpdate struct {
-	ID        string    `json:"id"`
-	StoreID   string    `json:"store_id"`
-	Name      string    `json:"name"`
-	Value     string    `json:"value"`
-	CreatedAt time.Time `json:"created_at"`
-	UpdatedAt time.Time `json:"updated_at"`
+	Name  string `json:"name" validate:"required"`
+	Value string `json:"value" validate:"required"`
 }
 
 func ToColorResponse(color Color) ColorResponse {

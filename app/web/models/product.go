@@ -11,7 +11,8 @@ type Product struct {
 	CategoryID string      `json:"category_id" gorm:"not null;index"`
 	Category   Category    `gorm:"foreignKey:CategoryID;references:ID" json:"category"`
 	Name       string      `json:"name"`
-	Price      float64     `json:"price" gorm:"type:decimal(10,2)"`
+	Price      float64     `json:"price" `
+	Stock      int64       `json:"stock"`
 	IsFeatured bool        `json:"is_featured"`
 	IsArchived bool        `json:"is_archived"`
 	SizeID     string      `json:"size_id" gorm:"not null;index"`
@@ -31,6 +32,7 @@ type ProductResponse struct {
 	CategoryID string      `json:"category_id"`
 	Category   Category    `json:"category"`
 	Name       string      `json:"name"`
+	Stock      int64       `json:"stock"`
 	Price      float64     `json:"price"`
 	IsFeatured bool        `json:"is_featured"`
 	IsArchived bool        `json:"is_archived"`
@@ -50,6 +52,7 @@ type ProductResponseHiddenStore struct {
 	CategoryID string      `json:"category_id"`
 	Category   Category    `json:"category"`
 	Name       string      `json:"name"`
+	Stock      int64       `json:"stock"`
 	Price      float64     `json:"price"`
 	IsFeatured bool        `json:"is_featured"`
 	IsArchived bool        `json:"is_archived"`
@@ -71,6 +74,7 @@ type ProductCreate struct {
 	Category   Category    `json:"category"`
 	Name       string      `json:"name"`
 	Price      float64     `json:"price"`
+	Stock      int64       `json:"stock"`
 	IsFeatured bool        `json:"is_featured"`
 	IsArchived bool        `json:"is_archived"`
 	SizeID     string      `json:"size_id"`
@@ -84,13 +88,13 @@ type ProductCreate struct {
 }
 
 type ProductUpdate struct {
-	ID         string      `json:"id"`
 	StoreID    string      `json:"store_id"`
 	Store      Store       `json:"store"`
 	CategoryID string      `json:"category_id"`
 	Category   Category    `json:"category"`
 	Name       string      `json:"name"`
 	Price      float64     `json:"price"`
+	Stock      int64       `json:"stock"`
 	IsFeatured bool        `json:"is_featured"`
 	IsArchived bool        `json:"is_archived"`
 	SizeID     string      `json:"size_id"`
@@ -112,6 +116,7 @@ func ToProductResponse(product Product) ProductResponse {
 		Category:   product.Category,
 		Name:       product.Name,
 		Price:      product.Price,
+		Stock:      product.Stock,
 		IsFeatured: product.IsFeatured,
 		IsArchived: product.IsArchived,
 		SizeID:     product.SizeID,
@@ -137,6 +142,7 @@ func ToProductResponseHiddenStore(product Product) ProductResponseHiddenStore {
 		IsArchived: product.IsArchived,
 		SizeID:     product.SizeID,
 		Size:       product.Size,
+		Stock:      product.Stock,
 		ColorID:    product.ColorID,
 		Color:      product.Color,
 		Images:     product.Images,

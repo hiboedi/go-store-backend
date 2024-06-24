@@ -19,7 +19,7 @@ type BillboardServiceImpl struct {
 
 type BillboardService interface {
 	Create(ctx context.Context, request models.BillboardCreate) models.BillboardResponseHiddenStore
-	Update(ctx context.Context, request models.BillboardUpdate) models.BillboardResponseHiddenStore
+	Update(ctx context.Context, request models.BillboardUpdate, billboardId string) models.BillboardResponseHiddenStore
 	Delete(ctx context.Context, billboardId string)
 	FindById(ctx context.Context, billboardId string) models.BillboardResponse
 	FindAll(ctx context.Context) []models.BillboardResponse
@@ -52,14 +52,14 @@ func (s *BillboardServiceImpl) Create(ctx context.Context, request models.Billbo
 	return models.ToBillboardResponseHiddenStore(data)
 }
 
-func (s *BillboardServiceImpl) Update(ctx context.Context, request models.BillboardUpdate) models.BillboardResponseHiddenStore {
+func (s *BillboardServiceImpl) Update(ctx context.Context, request models.BillboardUpdate, billboardId string) models.BillboardResponseHiddenStore {
 	err := s.Validate.Struct(request)
 	helpers.PanicIfError(err)
 
 	tx := s.DB.Begin()
 	defer helpers.CommitOrRollback(tx)
 
-	billboard, err := s.BillboardRepository.GetBillboardById(ctx, tx, request.ID)
+	billboard, err := s.BillboardRepository.GetBillboardById(ctx, tx, billboardId)
 	if err != nil {
 		panic(exceptions.NewNotFoundError(err.Error()))
 	}

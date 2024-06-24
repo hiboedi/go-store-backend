@@ -31,21 +31,13 @@ type ImageResponseHiddenProduct struct {
 }
 
 type ImageCreate struct {
-	ID        string    `json:"id"`
-	ProductID string    `json:"product_id"`
-	Product   Product   `json:"product"`
-	URL       string    `json:"url"`
-	CreatedAt time.Time `json:"created_at"`
-	UpdatedAt time.Time `json:"updated_at"`
+	ProductID string `json:"product_id"`
+	URL       string `json:"url" validate:"required"`
 }
 
 type ImageUpdate struct {
-	ID        string    `json:"id"`
-	ProductID string    `json:"product_id"`
-	Product   Product   `json:"product"`
-	URL       string    `json:"url"`
-	CreatedAt time.Time `json:"created_at"`
-	UpdatedAt time.Time `json:"updated_at"`
+	ProductID string `json:"product_id"`
+	URL       string `json:"url" validate:"required"`
 }
 
 func ToImageResponse(image Image) ImageResponse {

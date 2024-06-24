@@ -55,9 +55,8 @@ func (c *StoreControllerImpl) Update(w http.ResponseWriter, r *http.Request) {
 
 	vars := mux.Vars(r)
 	storeID := vars["storeId"]
-	storeUpdateRequest.ID = storeID
 
-	orderResponse := c.StoreService.Update(r.Context(), storeUpdateRequest)
+	orderResponse := c.StoreService.Update(r.Context(), storeUpdateRequest, storeID)
 	webResponse := web.WebResponse{
 		Code:   http.StatusOK,
 		Status: "Ok",

@@ -48,7 +48,6 @@ type StoreCreate struct {
 }
 
 type StoreUpdate struct {
-	ID         string      `json:"id" `
 	Name       string      `json:"name" `
 	UserID     string      `json:"user_id" `
 	User       User        `json:"user" `

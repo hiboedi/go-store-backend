@@ -53,9 +53,8 @@ func (c *CategoryControllerImpl) Update(w http.ResponseWriter, r *http.Request) 
 
 	vars := mux.Vars(r)
 	categoryId := vars["categoryId"]
-	categoryUpdateRequest.ID = categoryId
 
-	categoryResponse := c.CategoryService.Update(r.Context(), categoryUpdateRequest)
+	categoryResponse := c.CategoryService.Update(r.Context(), categoryUpdateRequest, categoryId)
 	webResponse := web.WebResponse{
 		Code:   http.StatusOK,
 		Status: "Ok",

@@ -45,8 +45,10 @@ func (c *OrderItemControllerImpl) Create(w http.ResponseWriter, r *http.Request)
 func (c *OrderItemControllerImpl) Update(w http.ResponseWriter, r *http.Request) {
 	orderItemUpdateRequest := models.OrderItemUpdate{}
 	helpers.ToRequestBody(r, &orderItemUpdateRequest)
+	vars := mux.Vars(r)
+	orderItemId := vars["orderItemId"]
 
-	orderItemResponse := c.OrderItemService.Update(r.Context(), orderItemUpdateRequest)
+	orderItemResponse := c.OrderItemService.Update(r.Context(), orderItemUpdateRequest, orderItemId)
 	webResponse := web.WebResponse{
 		Code:   http.StatusOK,
 		Status: "Ok",

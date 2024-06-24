@@ -19,7 +19,7 @@ type SizeServiceImpl struct {
 
 type SizeService interface {
 	Create(ctx context.Context, request models.SizeCreate) models.SizeResponseHiddenStore
-	Update(ctx context.Context, request models.SizeUpdate) models.SizeResponseHiddenStore
+	Update(ctx context.Context, request models.SizeUpdate, sizeId string) models.SizeResponseHiddenStore
 	Delete(ctx context.Context, sizeId string)
 	FindById(ctx context.Context, sizeId string) models.SizeResponse
 	FindAll(ctx context.Context) []models.SizeResponse
@@ -52,14 +52,14 @@ func (s *SizeServiceImpl) Create(ctx context.Context, request models.SizeCreate)
 	return models.ToSizeResponseHiddenStore(data)
 }
 
-func (s *SizeServiceImpl) Update(ctx context.Context, request models.SizeUpdate) models.SizeResponseHiddenStore {
+func (s *SizeServiceImpl) Update(ctx context.Context, request models.SizeUpdate, sizeId string) models.SizeResponseHiddenStore {
 	err := s.Validate.Struct(request)
 	helpers.PanicIfError(err)
 
 	tx := s.DB.Begin()
 	defer helpers.CommitOrRollback(tx)
 
-	size, err := s.SizeRepository.GetSizeById(ctx, tx, request.ID)
+	size, err := s.SizeRepository.GetSizeById(ctx, tx, sizeId)
 	if err != nil {
 		panic(exceptions.NewNotFoundError(err.Error()))
 	}
