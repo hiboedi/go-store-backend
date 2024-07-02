@@ -5,7 +5,7 @@ import (
 )
 
 type Image struct {
-	ID        string    `json:"id" gorm:"not null;uniqueIndex;primary_key"`
+	ID        string    ` json:"id" gorm:"not null;uniqueIndex;primary_key"`
 	ProductID string    `json:"product_id" gorm:"not null;index"`
 	Product   Product   `gorm:"foreignKey:ProductID;constraint:OnDelete:CASCADE" json:"-"`
 	URL       string    `json:"url"`

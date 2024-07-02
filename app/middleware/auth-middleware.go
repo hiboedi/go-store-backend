@@ -18,13 +18,6 @@ func NewAuthMiddleware(handler http.Handler) *AuthMiddleware {
 	return &AuthMiddleware{Handler: handler}
 }
 
-// Fungsi untuk memverifikasi token
-func VerifyToken(token string) error {
-	// Implementasikan logika untuk memverifikasi token
-	// Ini adalah contoh, sesuaikan dengan logika verifikasi yang sesuai
-	return nil
-}
-
 // Implementasi middleware ServeHTTP
 func (middleware *AuthMiddleware) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	// Dapatkan token dari header Authorization
@@ -47,11 +40,8 @@ func (middleware *AuthMiddleware) ServeHTTP(w http.ResponseWriter, r *http.Reque
 	tokenString = strings.TrimPrefix(tokenString, "Bearer ")
 
 	// Memeriksa apakah token valid
-	if err := VerifyToken(tokenString); err != nil {
-		w.WriteHeader(http.StatusUnauthorized)
-		fmt.Fprint(w, err.Error())
-		return
-	}
+	err := helpers.VerifyToken(tokenString)
+	helpers.PanicIfError(err)
 
 	// Memeriksa cookie user
 	if _, err := r.Cookie(helpers.UserSession); err != nil {

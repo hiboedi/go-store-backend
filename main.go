@@ -14,6 +14,25 @@ import (
 	"github.com/hiboedi/go-store-backend/app/web/services"
 )
 
+// @title Go-Store
+// @version 1.0
+// @description This is a sample server Petstore server.
+// @termsOfService http://swagger.io/terms/
+
+//@securityDefinitions.apikey ApiKeyAuth
+//@in header
+//@name Authorization
+
+// @contact.name API Support
+// @contact.url http://www.swagger.io/support
+// @contact.email support@swagger.io
+
+// @license.name Apache 2.0
+// @license.url http://www.apache.org/licenses/LICENSE-2.0.html
+
+// @host localhost:8000
+// @BasePath /api
+
 func main() {
 	db := database.InitializeDB()
 	validate := validator.New()
@@ -26,7 +45,6 @@ func main() {
 	colorRepository := repositories.NewColorRepository()
 	sizeRepository := repositories.NewSizeRepository()
 	productRepository := repositories.NewProductRepository()
-	imageRepository := repositories.NewImageRepository()
 	orderRepository := repositories.NewOrderRepository()
 	orderItemRepository := repositories.NewOrderItemRepository()
 
@@ -37,9 +55,8 @@ func main() {
 	categoryService := services.NewCategoryService(categoryRepository, db, validate)
 	colorService := services.NewColorService(colorRepository, db, validate)
 	sizeService := services.NewSizeService(sizeRepository, db, validate)
-	imageService := services.NewImageService(imageRepository, db, validate)
 	orderItemService := services.NewOrderItemService(orderItemRepository, db, validate)
-	productService := services.NewProductService(productRepository, imageService, db, validate)
+	productService := services.NewProductService(productRepository, db, validate)
 	orderService := services.NewOrderService(orderRepository, orderItemService, db, validate)
 
 	// Initialize controllers

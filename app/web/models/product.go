@@ -11,7 +11,7 @@ type Product struct {
 	CategoryID string      `json:"category_id" gorm:"not null;index"`
 	Category   Category    `gorm:"foreignKey:CategoryID;references:ID" json:"category"`
 	Name       string      `json:"name"`
-	Price      float64     `json:"price"`
+	Price      float64     `json:"price" `
 	Stock      int64       `json:"stock"`
 	IsFeatured bool        `json:"is_featured"`
 	IsArchived bool        `json:"is_archived"`

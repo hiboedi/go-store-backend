@@ -117,7 +117,15 @@ func (r *ProductRepositoryImpl) UpdateProduct(ctx context.Context, db *gorm.DB, 
 }
 
 func (r *ProductRepositoryImpl) DeleteProduct(ctx context.Context, db *gorm.DB, product models.Product) error {
-	err := db.WithContext(ctx).Model(&models.Product{}).Where("id = ?", product.ID).Delete(&product).Error
+	var images []models.Image
+	err := db.WithContext(ctx).Model(&models.Image{}).Where("product_id = ?", product.ID).Find(&images).Error
+	helpers.PanicIfError(err)
+
+	err = db.WithContext(ctx).Model(&models.Image{}).Where("product_id = ?", product.ID).Delete(&images).Error
+	helpers.PanicIfError(err)
+
+	err = db.WithContext(ctx).Model(&models.Product{}).Where("id = ?", product.ID).Delete(&product).Error
+
 	helpers.PanicIfError(err)
 
 	return nil

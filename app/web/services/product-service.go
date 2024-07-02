@@ -13,7 +13,6 @@ import (
 
 type ProductServiceImpl struct {
 	ProductRepository repositories.ProductRepository
-	ImageService      ImageService
 	DB                *gorm.DB
 	Validate          *validator.Validate
 }
@@ -26,10 +25,9 @@ type ProductService interface {
 	FindAll(ctx context.Context, storeId string) []models.ProductResponse
 }
 
-func NewProductService(productRepo repositories.ProductRepository, imageService ImageService, db *gorm.DB, validate *validator.Validate) ProductService {
+func NewProductService(productRepo repositories.ProductRepository, db *gorm.DB, validate *validator.Validate) ProductService {
 	return &ProductServiceImpl{
 		ProductRepository: productRepo,
-		ImageService:      imageService,
 		DB:                db,
 		Validate:          validate,
 	}
