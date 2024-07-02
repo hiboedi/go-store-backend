@@ -90,7 +90,10 @@ func (c *CategoryControllerImpl) FindById(w http.ResponseWriter, r *http.Request
 }
 
 func (c *CategoryControllerImpl) FindAll(w http.ResponseWriter, r *http.Request) {
-	categoryResponse := c.CategoryService.FindAll(r.Context())
+	vars := mux.Vars(r)
+	storeId := vars["storeId"]
+
+	categoryResponse := c.CategoryService.FindAll(r.Context(), storeId)
 	webResponse := web.WebResponse{
 		Code:   http.StatusOK,
 		Status: "Ok",

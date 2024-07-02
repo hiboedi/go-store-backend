@@ -22,7 +22,7 @@ type SizeService interface {
 	Update(ctx context.Context, request models.SizeUpdate, sizeId string) models.SizeResponseHiddenStore
 	Delete(ctx context.Context, sizeId string)
 	FindById(ctx context.Context, sizeId string) models.SizeResponse
-	FindAll(ctx context.Context) []models.SizeResponse
+	FindAll(ctx context.Context, storeId string) []models.SizeResponse
 }
 
 func NewSizeService(sizeRepo repositories.SizeRepository, db *gorm.DB, validate *validator.Validate) SizeService {
@@ -86,11 +86,11 @@ func (s *SizeServiceImpl) Delete(ctx context.Context, sizeId string) {
 	helpers.PanicIfError(err)
 }
 
-func (s *SizeServiceImpl) FindAll(ctx context.Context) []models.SizeResponse {
+func (s *SizeServiceImpl) FindAll(ctx context.Context, storeId string) []models.SizeResponse {
 	tx := s.DB.Begin()
 	defer helpers.CommitOrRollback(tx)
 
-	sizes, err := s.SizeRepository.FindAllSizes(ctx, tx)
+	sizes, err := s.SizeRepository.FindAllSizes(ctx, tx, storeId)
 	helpers.PanicIfError(err)
 
 	return models.ToSizeResponses(sizes)

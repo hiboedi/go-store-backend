@@ -17,7 +17,7 @@ type StoreRepository interface {
 	UpdateStore(ctx context.Context, db *gorm.DB, store models.Store) (models.Store, error)
 	DeleteStore(ctx context.Context, db *gorm.DB, store models.Store) error
 	GetStoreById(ctx context.Context, db *gorm.DB, storeId string) (models.Store, error)
-	FindAllStore(ctx context.Context, db *gorm.DB) ([]models.Store, error)
+	FindAllStore(ctx context.Context, db *gorm.DB, userId string) ([]models.Store, error)
 }
 
 func NewStoreRepository() StoreRepository {
@@ -71,10 +71,10 @@ func (r *StoreRepositoryImpl) DeleteStore(ctx context.Context, db *gorm.DB, stor
 	return nil
 }
 
-func (r *StoreRepositoryImpl) FindAllStore(ctx context.Context, db *gorm.DB) ([]models.Store, error) {
+func (r *StoreRepositoryImpl) FindAllStore(ctx context.Context, db *gorm.DB, userId string) ([]models.Store, error) {
 	var stores []models.Store
 
-	err := db.WithContext(ctx).Model(&models.Store{}).Preload("Billboards").Preload("User", func(db *gorm.DB) *gorm.DB {
+	err := db.WithContext(ctx).Model(&models.Store{}).Where("user_id = ?", userId).Preload("Billboards").Preload("User", func(db *gorm.DB) *gorm.DB {
 		return db.Omit("password")
 	}).Find(&stores).Error
 	helpers.PanicIfError(err)

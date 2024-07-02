@@ -43,8 +43,8 @@ type BillboardCreate struct {
 }
 
 type BillboardUpdate struct {
-	Label    string `json:"label" validate:"required,min=4,max=50"`
-	ImageURL string `json:"image_url" validate:"required"`
+	Label    string `json:"label"`
+	ImageURL string `json:"image_url"`
 }
 
 func ToBillboardReponse(billboard Billboard) BillboardResponse {

@@ -23,7 +23,7 @@ type ProductService interface {
 	Update(ctx context.Context, request models.ProductUpdate, productId string) models.ProductResponseHiddenStore
 	Delete(ctx context.Context, productId string)
 	FindById(ctx context.Context, productId string) models.ProductResponse
-	FindAll(ctx context.Context) []models.ProductResponse
+	FindAll(ctx context.Context, storeId string) []models.ProductResponse
 }
 
 func NewProductService(productRepo repositories.ProductRepository, imageService ImageService, db *gorm.DB, validate *validator.Validate) ProductService {
@@ -82,8 +82,10 @@ func (s *ProductServiceImpl) Update(ctx context.Context, request models.ProductU
 	product.IsArchived = request.IsArchived
 	product.SizeID = request.SizeID
 	product.ColorID = request.ColorID
+	product.Stock = request.Stock
 	product.Images = request.Images
 	product.OrderItems = request.OrderItems
+	product.Images = request.Images
 
 	data, err := s.ProductRepository.UpdateProduct(ctx, tx, product)
 	helpers.PanicIfError(err)
@@ -104,11 +106,11 @@ func (s *ProductServiceImpl) Delete(ctx context.Context, productId string) {
 	helpers.PanicIfError(err)
 }
 
-func (s *ProductServiceImpl) FindAll(ctx context.Context) []models.ProductResponse {
+func (s *ProductServiceImpl) FindAll(ctx context.Context, storeId string) []models.ProductResponse {
 	tx := s.DB.Begin()
 	defer helpers.CommitOrRollback(tx)
 
-	products, err := s.ProductRepository.FindAllProducts(ctx, tx)
+	products, err := s.ProductRepository.FindAllProducts(ctx, tx, storeId)
 	helpers.PanicIfError(err)
 	return models.ToProductResponses(products)
 }

@@ -17,7 +17,7 @@ type SizeRepository interface {
 	UpdateSize(ctx context.Context, db *gorm.DB, size models.Size) (models.Size, error)
 	DeleteSize(ctx context.Context, db *gorm.DB, size models.Size) error
 	GetSizeById(ctx context.Context, db *gorm.DB, sizeId string) (models.Size, error)
-	FindAllSizes(ctx context.Context, db *gorm.DB) ([]models.Size, error)
+	FindAllSizes(ctx context.Context, db *gorm.DB, storeId string) ([]models.Size, error)
 }
 
 func NewSizeRepository() SizeRepository {
@@ -73,10 +73,10 @@ func (r *SizeRepositoryImpl) DeleteSize(ctx context.Context, db *gorm.DB, size m
 	return nil
 }
 
-func (r *SizeRepositoryImpl) FindAllSizes(ctx context.Context, db *gorm.DB) ([]models.Size, error) {
+func (r *SizeRepositoryImpl) FindAllSizes(ctx context.Context, db *gorm.DB, storeId string) ([]models.Size, error) {
 	var sizes []models.Size
 
-	err := db.WithContext(ctx).Model(&models.Size{}).Preload("Store", func(db *gorm.DB) *gorm.DB {
+	err := db.WithContext(ctx).Model(&models.Size{}).Where("store_id = ?", storeId).Preload("Store", func(db *gorm.DB) *gorm.DB {
 		return db.Preload("User", func(db *gorm.DB) *gorm.DB {
 			return db.Omit("password", "email", "store")
 		})

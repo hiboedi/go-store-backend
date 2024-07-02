@@ -89,7 +89,10 @@ func (c *OrderControllerImpl) FindById(w http.ResponseWriter, r *http.Request) {
 }
 
 func (c *OrderControllerImpl) FindAll(w http.ResponseWriter, r *http.Request) {
-	orderResponse := c.OrderService.FindAll(r.Context())
+	vars := mux.Vars(r)
+	storeId := vars["storeId"]
+
+	orderResponse := c.OrderService.FindAll(r.Context(), storeId)
 	webResponse := web.WebResponse{
 		Code:   http.StatusOK,
 		Status: "Ok",

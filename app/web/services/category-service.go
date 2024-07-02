@@ -22,7 +22,7 @@ type CategoryService interface {
 	Update(ctx context.Context, request models.CategoryUpdate, categoryId string) models.CategoryResponse
 	Delete(ctx context.Context, categoryId string)
 	FindById(ctx context.Context, categoryId string) models.CategoryResponse
-	FindAll(ctx context.Context) []models.CategoryResponse
+	FindAll(ctx context.Context, storeId string) []models.CategoryResponse
 }
 
 func NewCategoryService(categoryRepo repositories.CategoryRepository, db *gorm.DB, validate *validator.Validate) CategoryService {
@@ -86,11 +86,11 @@ func (s *CategoryServiceImpl) Delete(ctx context.Context, categoryId string) {
 	helpers.PanicIfError(err)
 }
 
-func (s *CategoryServiceImpl) FindAll(ctx context.Context) []models.CategoryResponse {
+func (s *CategoryServiceImpl) FindAll(ctx context.Context, storeId string) []models.CategoryResponse {
 	tx := s.DB.Begin()
 	defer helpers.CommitOrRollback(tx)
 
-	categories, err := s.CategoryRepository.FindAllCategories(ctx, tx)
+	categories, err := s.CategoryRepository.FindAllCategories(ctx, tx, storeId)
 	helpers.PanicIfError(err)
 
 	return models.ToCategoryResponses(categories)

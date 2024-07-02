@@ -89,7 +89,11 @@ func (c *BillboardControllerImpl) FindById(w http.ResponseWriter, r *http.Reques
 }
 
 func (c *BillboardControllerImpl) FindAll(w http.ResponseWriter, r *http.Request) {
-	billboardResponse := c.BillboardService.FindAll(r.Context())
+
+	vars := mux.Vars(r)
+	storeId := vars["storeId"]
+
+	billboardResponse := c.BillboardService.FindAll(r.Context(), storeId)
 	webResponse := web.WebResponse{
 		Code:   http.StatusOK,
 		Status: "Ok",

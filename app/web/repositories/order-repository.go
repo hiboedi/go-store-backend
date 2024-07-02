@@ -17,7 +17,7 @@ type OrderRepository interface {
 	UpdateOrder(ctx context.Context, db *gorm.DB, order models.Order) (models.Order, error)
 	DeleteOrder(ctx context.Context, db *gorm.DB, order models.Order) error
 	GetOrderById(ctx context.Context, db *gorm.DB, orderId string) (models.Order, error)
-	FindAllOrders(ctx context.Context, db *gorm.DB) ([]models.Order, error)
+	FindAllOrders(ctx context.Context, db *gorm.DB, storeId string) ([]models.Order, error)
 }
 
 func NewOrderRepository() OrderRepository {
@@ -89,10 +89,10 @@ func (r *OrderRepositoryImpl) DeleteOrder(ctx context.Context, db *gorm.DB, orde
 	return nil
 }
 
-func (r *OrderRepositoryImpl) FindAllOrders(ctx context.Context, db *gorm.DB) ([]models.Order, error) {
+func (r *OrderRepositoryImpl) FindAllOrders(ctx context.Context, db *gorm.DB, storeId string) ([]models.Order, error) {
 	var orders []models.Order
 
-	err := db.WithContext(ctx).Model(&models.Order{}).Preload("OrderItems").Find(&orders).Error
+	err := db.WithContext(ctx).Model(&models.Order{}).Where("store_id = ?", storeId).Preload("OrderItems").Find(&orders).Error
 	helpers.PanicIfError(err)
 
 	return orders, nil

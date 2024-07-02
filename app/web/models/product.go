@@ -11,7 +11,7 @@ type Product struct {
 	CategoryID string      `json:"category_id" gorm:"not null;index"`
 	Category   Category    `gorm:"foreignKey:CategoryID;references:ID" json:"category"`
 	Name       string      `json:"name"`
-	Price      float64     `json:"price" `
+	Price      float64     `json:"price"`
 	Stock      int64       `json:"stock"`
 	IsFeatured bool        `json:"is_featured"`
 	IsArchived bool        `json:"is_archived"`
@@ -47,23 +47,19 @@ type ProductResponse struct {
 }
 
 type ProductResponseHiddenStore struct {
-	ID         string      `json:"id"`
-	StoreID    string      `json:"store_id"`
-	CategoryID string      `json:"category_id"`
-	Category   Category    `json:"category"`
-	Name       string      `json:"name"`
-	Stock      int64       `json:"stock"`
-	Price      float64     `json:"price"`
-	IsFeatured bool        `json:"is_featured"`
-	IsArchived bool        `json:"is_archived"`
-	SizeID     string      `json:"size_id"`
-	Size       Size        `json:"size"`
-	ColorID    string      `json:"color_id"`
-	Color      Color       `json:"color"`
-	Images     []Image     `json:"images"`
-	OrderItems []OrderItem `json:"order_items"`
-	CreatedAt  time.Time   `json:"created_at"`
-	UpdatedAt  time.Time   `json:"updated_at"`
+	ID         string    `json:"id"`
+	StoreID    string    `json:"store_id"`
+	CategoryID string    `json:"category_id"`
+	Name       string    `json:"name"`
+	Stock      int64     `json:"stock"`
+	Price      float64   `json:"price"`
+	IsFeatured bool      `json:"is_featured"`
+	IsArchived bool      `json:"is_archived"`
+	SizeID     string    `json:"size_id"`
+	ColorID    string    `json:"color_id"`
+	Images     []Image   `json:"images"`
+	CreatedAt  time.Time `json:"created_at"`
+	UpdatedAt  time.Time `json:"updated_at"`
 }
 
 type ProductCreate struct {
@@ -101,7 +97,7 @@ type ProductUpdate struct {
 	Size       Size        `json:"size"`
 	ColorID    string      `json:"color_id"`
 	Color      Color       `json:"color"`
-	Images     []Image     `json:"images"`
+	Images     []Image     `json:"images" gorm:"constraint:OnDelete:CASCADE;"`
 	OrderItems []OrderItem `json:"order_items"`
 	CreatedAt  time.Time   `json:"created_at"`
 	UpdatedAt  time.Time   `json:"updated_at"`
@@ -135,18 +131,14 @@ func ToProductResponseHiddenStore(product Product) ProductResponseHiddenStore {
 		ID:         product.ID,
 		StoreID:    product.StoreID,
 		CategoryID: product.CategoryID,
-		Category:   product.Category,
 		Name:       product.Name,
 		Price:      product.Price,
 		IsFeatured: product.IsFeatured,
 		IsArchived: product.IsArchived,
 		SizeID:     product.SizeID,
-		Size:       product.Size,
 		Stock:      product.Stock,
 		ColorID:    product.ColorID,
-		Color:      product.Color,
 		Images:     product.Images,
-		OrderItems: product.OrderItems,
 		CreatedAt:  product.CreatedAt,
 		UpdatedAt:  product.UpdatedAt,
 	}

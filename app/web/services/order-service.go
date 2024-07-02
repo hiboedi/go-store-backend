@@ -23,7 +23,7 @@ type OrderService interface {
 	Update(ctx context.Context, request models.OrderUpdate, orderId string) models.OrderResponseHiddenStore
 	Delete(ctx context.Context, orderId string)
 	FindById(ctx context.Context, orderId string) models.OrderResponse
-	FindAll(ctx context.Context) []models.OrderResponse
+	FindAll(ctx context.Context, storeId string) []models.OrderResponse
 }
 
 func NewOrderService(orderRepo repositories.OrderRepository, orderItemService OrderItemService, db *gorm.DB, validate *validator.Validate) OrderService {
@@ -89,11 +89,11 @@ func (s *OrderServiceImpl) Delete(ctx context.Context, orderId string) {
 	helpers.PanicIfError(err)
 }
 
-func (s *OrderServiceImpl) FindAll(ctx context.Context) []models.OrderResponse {
+func (s *OrderServiceImpl) FindAll(ctx context.Context, storeId string) []models.OrderResponse {
 	tx := s.DB.Begin()
 	defer helpers.CommitOrRollback(tx)
 
-	orders, err := s.OrderRepository.FindAllOrders(ctx, tx)
+	orders, err := s.OrderRepository.FindAllOrders(ctx, tx, storeId)
 	helpers.PanicIfError(err)
 	return models.ToOrderResponses(orders)
 }

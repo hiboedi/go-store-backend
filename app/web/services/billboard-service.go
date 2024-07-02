@@ -22,7 +22,7 @@ type BillboardService interface {
 	Update(ctx context.Context, request models.BillboardUpdate, billboardId string) models.BillboardResponseHiddenStore
 	Delete(ctx context.Context, billboardId string)
 	FindById(ctx context.Context, billboardId string) models.BillboardResponse
-	FindAll(ctx context.Context) []models.BillboardResponse
+	FindAll(ctx context.Context, storeId string) []models.BillboardResponse
 }
 
 func NewBillboardService(billboardRepo repositories.BillboardRepository, db *gorm.DB, validate *validator.Validate) BillboardService {
@@ -86,11 +86,11 @@ func (s *BillboardServiceImpl) Delete(ctx context.Context, billboardId string) {
 	helpers.PanicIfError(err)
 }
 
-func (s *BillboardServiceImpl) FindAll(ctx context.Context) []models.BillboardResponse {
+func (s *BillboardServiceImpl) FindAll(ctx context.Context, storeId string) []models.BillboardResponse {
 	tx := s.DB.Begin()
 	defer helpers.CommitOrRollback(tx)
 
-	billboards, err := s.BillboardRepository.FindAllBillboards(ctx, tx)
+	billboards, err := s.BillboardRepository.FindAllBillboards(ctx, tx, storeId)
 	helpers.PanicIfError(err)
 	return models.ToBillboardResponses(billboards)
 }

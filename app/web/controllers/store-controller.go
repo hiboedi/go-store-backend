@@ -92,7 +92,14 @@ func (c *StoreControllerImpl) FindById(w http.ResponseWriter, r *http.Request) {
 }
 
 func (c *StoreControllerImpl) FindAll(w http.ResponseWriter, r *http.Request) {
-	storeResponse := c.StoreService.FindAll(r.Context())
+	cookie, err := helpers.GetUserCookie(w, r)
+	if err != nil {
+		http.Redirect(w, r, "/api/login", http.StatusUnauthorized)
+	}
+
+	userID := cookie.Value
+
+	storeResponse := c.StoreService.FindAllByUserId(r.Context(), userID)
 	webResponse := web.WebResponse{
 		Code:   http.StatusOK,
 		Status: "Ok",

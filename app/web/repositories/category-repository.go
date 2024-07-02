@@ -17,7 +17,7 @@ type CategoryRepository interface {
 	UpdateCategory(ctx context.Context, db *gorm.DB, category models.Category) (models.Category, error)
 	DeleteCategory(ctx context.Context, db *gorm.DB, category models.Category) error
 	GetCategoryById(ctx context.Context, db *gorm.DB, categoryId string) (models.Category, error)
-	FindAllCategories(ctx context.Context, db *gorm.DB) ([]models.Category, error)
+	FindAllCategories(ctx context.Context, db *gorm.DB, storeId string) ([]models.Category, error)
 }
 
 func NewCategoryRepository() CategoryRepository {
@@ -76,10 +76,10 @@ func (r *CategoryRepositoryImpl) GetCategoryById(ctx context.Context, db *gorm.D
 	return category, nil
 }
 
-func (r *CategoryRepositoryImpl) FindAllCategories(ctx context.Context, db *gorm.DB) ([]models.Category, error) {
+func (r *CategoryRepositoryImpl) FindAllCategories(ctx context.Context, db *gorm.DB, storeId string) ([]models.Category, error) {
 	var categories []models.Category
 
-	err := db.WithContext(ctx).Model(&models.Category{}).
+	err := db.WithContext(ctx).Model(&models.Category{}).Where("store_id = ?", storeId).
 		Preload("Billboard").
 		Find(&categories).Error
 	helpers.PanicIfError(err)

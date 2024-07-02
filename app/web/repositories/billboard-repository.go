@@ -17,7 +17,7 @@ type BillboardRepository interface {
 	UpdateBillboard(ctx context.Context, db *gorm.DB, billboard models.Billboard) (models.Billboard, error)
 	DeleteBillboard(ctx context.Context, db *gorm.DB, billboard models.Billboard) error
 	GetBillboardById(ctx context.Context, db *gorm.DB, billboardId string) (models.Billboard, error)
-	FindAllBillboards(ctx context.Context, db *gorm.DB) ([]models.Billboard, error)
+	FindAllBillboards(ctx context.Context, db *gorm.DB, storeId string) ([]models.Billboard, error)
 }
 
 func NewBillboardRepository() BillboardRepository {
@@ -76,10 +76,10 @@ func (r *BillboardRepositoryImpl) DeleteBillboard(ctx context.Context, db *gorm.
 	return nil
 }
 
-func (r *BillboardRepositoryImpl) FindAllBillboards(ctx context.Context, db *gorm.DB) ([]models.Billboard, error) {
+func (r *BillboardRepositoryImpl) FindAllBillboards(ctx context.Context, db *gorm.DB, storeId string) ([]models.Billboard, error) {
 	var billboards []models.Billboard
 
-	err := db.WithContext(ctx).Model(&models.Billboard{}).Preload("Store", func(db *gorm.DB) *gorm.DB {
+	err := db.WithContext(ctx).Model(&models.Billboard{}).Where("store_id = ?", storeId).Preload("Store", func(db *gorm.DB) *gorm.DB {
 		return db.Preload("User", func(db *gorm.DB) *gorm.DB {
 			return db.Omit("password", "email", "store")
 		})

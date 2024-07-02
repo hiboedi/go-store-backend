@@ -22,7 +22,7 @@ type ColorService interface {
 	Update(ctx context.Context, request models.ColorUpdate, colorId string) models.ColorResponseHiddenStore
 	Delete(ctx context.Context, colorId string)
 	FindById(ctx context.Context, colorId string) models.ColorResponse
-	FindAll(ctx context.Context) []models.ColorResponse
+	FindAll(ctx context.Context, storeId string) []models.ColorResponse
 }
 
 func NewColorService(colorRepo repositories.ColorRepository, db *gorm.DB, validate *validator.Validate) ColorService {
@@ -86,11 +86,11 @@ func (s *ColorServiceImpl) Delete(ctx context.Context, colorId string) {
 	helpers.PanicIfError(err)
 }
 
-func (s *ColorServiceImpl) FindAll(ctx context.Context) []models.ColorResponse {
+func (s *ColorServiceImpl) FindAll(ctx context.Context, storeId string) []models.ColorResponse {
 	tx := s.DB.Begin()
 	defer helpers.CommitOrRollback(tx)
 
-	colors, err := s.ColorRepository.FindAllColors(ctx, tx)
+	colors, err := s.ColorRepository.FindAllColors(ctx, tx, storeId)
 	helpers.PanicIfError(err)
 
 	return models.ToColorResponses(colors)

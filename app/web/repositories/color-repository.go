@@ -17,7 +17,7 @@ type ColorRepository interface {
 	UpdateColor(ctx context.Context, db *gorm.DB, color models.Color) (models.Color, error)
 	DeleteColor(ctx context.Context, db *gorm.DB, color models.Color) error
 	GetColorById(ctx context.Context, db *gorm.DB, colorId string) (models.Color, error)
-	FindAllColors(ctx context.Context, db *gorm.DB) ([]models.Color, error)
+	FindAllColors(ctx context.Context, db *gorm.DB, storeId string) ([]models.Color, error)
 }
 
 func NewColorRepository() ColorRepository {
@@ -69,9 +69,9 @@ func (r *ColorRepositoryImpl) GetColorById(ctx context.Context, db *gorm.DB, col
 	return color, nil
 }
 
-func (r *ColorRepositoryImpl) FindAllColors(ctx context.Context, db *gorm.DB) ([]models.Color, error) {
+func (r *ColorRepositoryImpl) FindAllColors(ctx context.Context, db *gorm.DB, storeId string) ([]models.Color, error) {
 	var colors []models.Color
-	err := db.WithContext(ctx).Model(&models.Color{}).Find(&colors).Error
+	err := db.WithContext(ctx).Model(&models.Color{}).Where("store_id = ?", storeId).Find(&colors).Error
 	helpers.PanicIfError(err)
 
 	return colors, nil

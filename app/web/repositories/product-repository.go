@@ -17,7 +17,7 @@ type ProductRepository interface {
 	UpdateProduct(ctx context.Context, db *gorm.DB, product models.Product) (models.Product, error)
 	DeleteProduct(ctx context.Context, db *gorm.DB, product models.Product) error
 	GetProductById(ctx context.Context, db *gorm.DB, productId string) (models.Product, error)
-	FindAllProducts(ctx context.Context, db *gorm.DB) ([]models.Product, error)
+	FindAllProducts(ctx context.Context, db *gorm.DB, storeId string) ([]models.Product, error)
 }
 
 func NewProductRepository() ProductRepository {
@@ -25,8 +25,10 @@ func NewProductRepository() ProductRepository {
 }
 
 func (r *ProductRepositoryImpl) CreateProduct(ctx context.Context, db *gorm.DB, product models.Product) (models.Product, error) {
+	productId := uuid.New().String()
+
 	productModel := models.Product{
-		ID:         uuid.New().String(),
+		ID:         productId,
 		StoreID:    product.StoreID,
 		CategoryID: product.CategoryID,
 		Name:       product.Name,
@@ -36,12 +38,29 @@ func (r *ProductRepositoryImpl) CreateProduct(ctx context.Context, db *gorm.DB, 
 		IsArchived: product.IsArchived,
 		SizeID:     product.SizeID,
 		ColorID:    product.ColorID,
-		Images:     product.Images,
-		OrderItems: product.OrderItems,
 	}
 
-	err := db.WithContext(ctx).Create(&productModel).Error
-	helpers.PanicIfError(err)
+	err := db.WithContext(ctx).Save(&productModel).Error
+	if err != nil {
+		return models.Product{}, err
+	}
+
+	var images []models.Image
+	for _, image := range product.Images {
+		image.ID = uuid.New().String()
+		image.ProductID = productId
+		if err := db.WithContext(ctx).Create(&image).Error; err != nil {
+			return models.Product{}, err
+		}
+		images = append(images, image)
+	}
+
+	productModel.Images = images
+
+	err = db.WithContext(ctx).Save(&productModel).Error
+	if err != nil {
+		return models.Product{}, err
+	}
 
 	return productModel, nil
 }
@@ -58,12 +77,41 @@ func (r *ProductRepositoryImpl) UpdateProduct(ctx context.Context, db *gorm.DB, 
 		IsArchived: product.IsArchived,
 		SizeID:     product.SizeID,
 		ColorID:    product.ColorID,
-		Images:     product.Images,
-		OrderItems: product.OrderItems,
+		CreatedAt:  product.CreatedAt,
+		UpdatedAt:  product.UpdatedAt,
 	}
 
 	err := db.WithContext(ctx).Model(&models.Product{}).Where("id = ?", product.ID).Updates(&productModel).Error
+	if err != nil {
+		return models.Product{}, err
+	}
+
+	var images []models.Image
+	err = db.WithContext(ctx).Model(&models.Image{}).Where("product_id = ?", product.ID).Find(&images).Error
 	helpers.PanicIfError(err)
+
+	updatedImages := []models.Image{}
+	for _, image := range images {
+		for _, productImage := range product.Images {
+			productImage.ID = image.ID
+			productImage.ProductID = image.ProductID
+			productImage.CreatedAt = image.CreatedAt
+			productImage.UpdatedAt = image.UpdatedAt
+
+			if err := db.WithContext(ctx).Model(&models.Image{}).Where("id = ?", image.ID).Updates(&productImage).Error; err != nil {
+				return models.Product{}, err
+			}
+			updatedImages = append(updatedImages, productImage)
+
+		}
+	}
+
+	productModel.Images = updatedImages
+
+	err = db.WithContext(ctx).Model(&models.Product{}).Where("id = ?", product.ID).Updates(&productModel).Error
+	if err != nil {
+		return models.Product{}, err
+	}
 
 	return productModel, nil
 }
@@ -92,9 +140,9 @@ func (r *ProductRepositoryImpl) GetProductById(ctx context.Context, db *gorm.DB,
 	return product, nil
 }
 
-func (r *ProductRepositoryImpl) FindAllProducts(ctx context.Context, db *gorm.DB) ([]models.Product, error) {
+func (r *ProductRepositoryImpl) FindAllProducts(ctx context.Context, db *gorm.DB, storeId string) ([]models.Product, error) {
 	var products []models.Product
-	err := db.WithContext(ctx).Model(&models.Product{}).
+	err := db.WithContext(ctx).Model(&models.Product{}).Where("store_id = ?", storeId).
 		Preload("Store").
 		Preload("Category").
 		Preload("Size").

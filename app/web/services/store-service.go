@@ -16,7 +16,7 @@ type StoreService interface {
 	Update(ctx context.Context, request models.StoreUpdate, storeId string) models.StoreResponse
 	Delete(ctx context.Context, storeId string)
 	FindById(ctx context.Context, storeId string) models.StoreResponse
-	FindAll(ctx context.Context) []models.StoreResponse
+	FindAllByUserId(ctx context.Context, userId string) []models.StoreResponse
 }
 
 type StoreServiceImpl struct {
@@ -84,11 +84,11 @@ func (s *StoreServiceImpl) Delete(ctx context.Context, storeId string) {
 	helpers.PanicIfError(err)
 }
 
-func (s *StoreServiceImpl) FindAll(ctx context.Context) []models.StoreResponse {
+func (s *StoreServiceImpl) FindAllByUserId(ctx context.Context, userId string) []models.StoreResponse {
 	tx := s.DB.Begin()
 	defer helpers.CommitOrRollback(tx)
 
-	stores, err := s.StoreRepository.FindAllStore(ctx, tx)
+	stores, err := s.StoreRepository.FindAllStore(ctx, tx, userId)
 	helpers.PanicIfError(err)
 	return models.ToStoreResponses(stores)
 }

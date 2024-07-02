@@ -89,7 +89,10 @@ func (c *SizeControllerImpl) FindById(w http.ResponseWriter, r *http.Request) {
 }
 
 func (c *SizeControllerImpl) FindAll(w http.ResponseWriter, r *http.Request) {
-	sizeResponse := c.SizeService.FindAll(r.Context())
+	vars := mux.Vars(r)
+	storeId := vars["storeId"]
+
+	sizeResponse := c.SizeService.FindAll(r.Context(), storeId)
 	webResponse := web.WebResponse{
 		Code:   http.StatusOK,
 		Status: "Ok",
