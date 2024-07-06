@@ -86,23 +86,31 @@ func (r *ProductRepositoryImpl) UpdateProduct(ctx context.Context, db *gorm.DB, 
 		return models.Product{}, err
 	}
 
-	var images []models.Image
-	err = db.WithContext(ctx).Model(&models.Image{}).Where("product_id = ?", product.ID).Find(&images).Error
+	var existingImages []models.Image
+	err = db.WithContext(ctx).Model(&models.Image{}).Where("product_id = ?", product.ID).Find(&existingImages).Error
 	helpers.PanicIfError(err)
 
 	updatedImages := []models.Image{}
-	for _, image := range images {
-		for _, productImage := range product.Images {
-			productImage.ID = image.ID
-			productImage.ProductID = image.ProductID
-			productImage.CreatedAt = image.CreatedAt
-			productImage.UpdatedAt = image.UpdatedAt
-
-			if err := db.WithContext(ctx).Model(&models.Image{}).Where("id = ?", image.ID).Updates(&productImage).Error; err != nil {
-				return models.Product{}, err
+	for _, image := range product.Images {
+		var existingImage *models.Image
+		for _, imageExsist := range existingImages {
+			if imageExsist.ID == image.ID {
+				existingImage = &imageExsist
+				break
 			}
-			updatedImages = append(updatedImages, productImage)
-
+		}
+		if existingImage != nil {
+			if err := db.WithContext(ctx).Model(&models.Image{}).Where("id = ?", existingImage.ID).Updates(&image).Error; err != nil {
+				panic(err)
+			}
+			updatedImages = append(updatedImages, image)
+		} else {
+			image.ID = uuid.New().String()
+			image.ProductID = product.ID
+			if err := db.WithContext(ctx).Create(&image).Error; err != nil {
+				panic(err)
+			}
+			updatedImages = append(updatedImages, image)
 		}
 	}
 

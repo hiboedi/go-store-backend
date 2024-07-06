@@ -53,12 +53,3 @@ func ToUserReponse(user User) UserResponse {
 		UpdatedAt: user.UpdatedAt,
 	}
 }
-
-// func ToUserResponses(users []User) []UserResponse {
-// 	var responses []UserResponse
-
-// 	for _, user := range users {
-// 		responses = append(responses, ToUserReponse(user))
-// 	}
-// 	return responses
-// }

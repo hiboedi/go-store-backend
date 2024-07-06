@@ -14,30 +14,10 @@ import (
 	"github.com/hiboedi/go-store-backend/app/web/services"
 )
 
-// @title Go-Store
-// @version 1.0
-// @description This is a sample server Petstore server.
-// @termsOfService http://swagger.io/terms/
-
-//@securityDefinitions.apikey ApiKeyAuth
-//@in header
-//@name Authorization
-
-// @contact.name API Support
-// @contact.url http://www.swagger.io/support
-// @contact.email support@swagger.io
-
-// @license.name Apache 2.0
-// @license.url http://www.apache.org/licenses/LICENSE-2.0.html
-
-// @host localhost:8000
-// @BasePath /api
-
 func main() {
 	db := database.InitializeDB()
 	validate := validator.New()
 
-	// Initialize repositories
 	userRepository := repositories.NewUserRepository()
 	storeRepository := repositories.NewStoreRepository()
 	billboardRepository := repositories.NewBillboardRepository()
@@ -48,7 +28,6 @@ func main() {
 	orderRepository := repositories.NewOrderRepository()
 	orderItemRepository := repositories.NewOrderItemRepository()
 
-	// Initialize services
 	userService := services.NewUserService(userRepository, db, validate)
 	storeService := services.NewStoreService(storeRepository, db, validate)
 	billboardService := services.NewBillboardService(billboardRepository, db, validate)
@@ -59,7 +38,6 @@ func main() {
 	productService := services.NewProductService(productRepository, db, validate)
 	orderService := services.NewOrderService(orderRepository, orderItemService, db, validate)
 
-	// Initialize controllers
 	userController := controllers.NewUserController(userService)
 	storeController := controllers.NewStoreController(storeService)
 	billboardController := controllers.NewBillboardController(billboardService)
@@ -69,8 +47,7 @@ func main() {
 	productController := controllers.NewProductController(productService)
 	orderController := controllers.NewOrderController(orderService)
 
-	// Initialize router
-	r := router.RouterInit(
+	router := router.RouterInit(
 		userController,
 		storeController,
 		billboardController,
@@ -81,18 +58,15 @@ func main() {
 		orderController,
 	)
 
-	// Perform database migration
 	database.DBMigrate()
 
-	// Initialize middleware and server
-	authRouter := middleware.NewAuthMiddleware(r)
+	authRouter := middleware.NewAuthMiddleware(router)
 
 	server := http.Server{
 		Addr:    "localhost:8000",
 		Handler: authRouter,
 	}
 
-	// Start the server
 	fmt.Println("Starting server on port :8000")
 	err := server.ListenAndServe()
 	helpers.PanicIfError(err)

@@ -4,6 +4,7 @@ import (
 	"context"
 
 	"github.com/go-playground/validator/v10"
+	"github.com/hiboedi/go-store-backend/app/auth"
 	"github.com/hiboedi/go-store-backend/app/exceptions"
 	"github.com/hiboedi/go-store-backend/app/helpers"
 	"github.com/hiboedi/go-store-backend/app/web/models"
@@ -61,7 +62,7 @@ func (s *UserServiceimpl) Login(ctx context.Context, requestLogin models.UserLog
 		panic(exceptions.NewNotFoundError(err.Error()))
 	}
 	passwordSync := helpers.ComparePassword(requestLogin.Password, user.Password)
-	token, _ := helpers.CreateToken(user.ID)
+	token, _ := auth.CreateToken(user.ID)
 
 	if !passwordSync {
 		return models.UserLoginResponse{}, false

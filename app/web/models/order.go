@@ -7,7 +7,7 @@ import (
 type Order struct {
 	ID              string      `json:"id" gorm:"not null;uniqueIndex;primary_key"`
 	StoreID         string      `json:"store_id" gorm:"not null;index"`
-	Store           Store       `gorm:"-"` // Jangan sertakan field Store dalam JSON
+	Store           Store       `gorm:"-"`
 	OrderItems      []OrderItem `gorm:"foreignKey:OrderID" json:"order_items"`
 	IsPaid          bool        `json:"is_paid"`
 	Phone           string      `json:"phone"`

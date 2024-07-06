@@ -1,4 +1,4 @@
-package helpers
+package auth
 
 import (
 	"fmt"
@@ -16,19 +16,18 @@ func CreateToken(id string) (string, error) {
 			"id":  id,
 			"exp": time.Now().Add(time.Hour * 24).Unix(),
 		})
-	tokenString, err := token.SignedString([]byte(secretKey)) // Mengubah secretKey menjadi byte slice
+	tokenString, err := token.SignedString([]byte(secretKey))
 	if err != nil {
-		return "", err // Mengembalikan kesalahan yang sesungguhnya
+		return "", err
 	}
 	return tokenString, nil
 }
 
 func VerifyToken(tokenString string) error {
 	token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
-		return []byte(secretKey), nil // Menyesuaikan dengan tipe kembalian secretKey
+		return []byte(secretKey), nil
 	})
 	if err != nil {
-		// Tangani kesalahan parsing
 		return fmt.Errorf("Invalid token: %v", err)
 	}
 	if !token.Valid {

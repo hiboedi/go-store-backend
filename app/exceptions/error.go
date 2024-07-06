@@ -17,67 +17,56 @@ func ErrorHandler(writer http.ResponseWriter, request *http.Request, err interfa
 		return
 	}
 
-	// tiap terjadi error
-	InternalServerError(writer, request, err)
+	internalServerError(writer, request, err)
 }
 
 func validationError(writer http.ResponseWriter, request *http.Request, err interface{}) bool {
 	exception, ok := err.(validator.ValidationErrors)
-	if ok && request.URL.Path == "/api/users/login" && request.Method == "POST" {
-
-		writer.Header().Add("Content-type", "application/json")
-		writer.WriteHeader(http.StatusUnauthorized)
-
-		webResponse := web.WebResponse{
-			Code:   http.StatusUnauthorized,
-			Status: "Unauthorized",
-			Data:   exception.Error(),
-		}
-
-		helpers.WriteResponseBody(writer, webResponse)
-		return true
-	}
 	if ok {
-		// masukan atribut ke header
-		writer.Header().Add("Content-type", "application/json")
-		writer.WriteHeader(http.StatusBadRequest)
+		writer.Header().Set("Content-Type", "application/json")
+
+		statusCode := http.StatusBadRequest
+		statusText := "Bad Request"
+
+		if request.URL.Path == "/api/users/login" && request.Method == "POST" {
+			statusCode = http.StatusUnauthorized
+			statusText = "Unauthorized"
+		}
+
+		writer.WriteHeader(statusCode)
 
 		webResponse := web.WebResponse{
-			Code:   http.StatusBadRequest,
-			Status: "BadRequest",
+			Code:   statusCode,
+			Status: statusText,
 			Data:   exception.Error(),
 		}
 
 		helpers.WriteResponseBody(writer, webResponse)
 		return true
-	} else {
-		return false
 	}
+	return false
 }
 
 func notFoundError(writer http.ResponseWriter, request *http.Request, err interface{}) bool {
 	exception, ok := err.(NotFoundError)
-
 	if ok {
-		// masukan atribut ke header
-		writer.Header().Add("Content-Type", "application/json")
+		writer.Header().Set("Content-Type", "application/json")
 		writer.WriteHeader(http.StatusNotFound)
 
 		webResponse := web.WebResponse{
 			Code:   http.StatusNotFound,
-			Status: "NotFound",
+			Status: "Not Found",
 			Data:   exception.Error,
 		}
 
 		helpers.WriteResponseBody(writer, webResponse)
 		return true
-	} else {
-		return false
 	}
+	return false
 }
 
-func InternalServerError(writer http.ResponseWriter, request *http.Request, err interface{}) {
-	writer.Header().Add("Content-Type", "application/json")
+func internalServerError(writer http.ResponseWriter, request *http.Request, err interface{}) {
+	writer.Header().Set("Content-Type", "application/json")
 	writer.WriteHeader(http.StatusInternalServerError)
 
 	webResponse := web.WebResponse{
