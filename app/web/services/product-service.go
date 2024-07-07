@@ -22,7 +22,7 @@ type ProductService interface {
 	Update(ctx context.Context, request models.ProductUpdate, productId string) models.ProductResponseHiddenStore
 	Delete(ctx context.Context, productId string)
 	FindById(ctx context.Context, productId string) models.ProductResponse
-	FindAll(ctx context.Context, storeId string) []models.ProductResponse
+	FindAll(ctx context.Context, storeId string, pageParam int64) models.ProductPagination
 }
 
 func NewProductService(productRepo repositories.ProductRepository, db *gorm.DB, validate *validator.Validate) ProductService {
@@ -104,13 +104,13 @@ func (s *ProductServiceImpl) Delete(ctx context.Context, productId string) {
 	helpers.PanicIfError(err)
 }
 
-func (s *ProductServiceImpl) FindAll(ctx context.Context, storeId string) []models.ProductResponse {
+func (s *ProductServiceImpl) FindAll(ctx context.Context, storeId string, pageParams int64) models.ProductPagination {
 	tx := s.DB.Begin()
 	defer helpers.CommitOrRollback(tx)
 
-	products, err := s.ProductRepository.FindAllProducts(ctx, tx, storeId)
+	products, pagination, err := s.ProductRepository.FindAllProducts(ctx, tx, storeId, pageParams)
 	helpers.PanicIfError(err)
-	return models.ToProductResponses(products)
+	return models.ToProductResponses(products, pagination)
 }
 
 func (s *ProductServiceImpl) FindById(ctx context.Context, productId string) models.ProductResponse {

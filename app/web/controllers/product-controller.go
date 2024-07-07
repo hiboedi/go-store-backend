@@ -2,6 +2,7 @@ package controllers
 
 import (
 	"net/http"
+	"strconv"
 
 	"github.com/gorilla/mux"
 	"github.com/hiboedi/go-store-backend/app/helpers"
@@ -95,7 +96,18 @@ func (c *ProductControllerImpl) FindAll(w http.ResponseWriter, r *http.Request) 
 	vars := mux.Vars(r)
 	storeId := vars["storeId"]
 
-	productResponse := c.ProductService.FindAll(r.Context(), storeId)
+	pageStr := r.URL.Query().Get("page")
+	page := int64(1)
+	if pageStr != "" {
+		pageParams, err := strconv.Atoi(pageStr)
+		if err != nil {
+			http.Error(w, "Invalid page parameter", http.StatusBadRequest)
+			return
+		}
+		page = int64(pageParams)
+	}
+
+	productResponse := c.ProductService.FindAll(r.Context(), storeId, page)
 	webResponse := web.WebResponse{
 		Code:   http.StatusOK,
 		Status: "Ok",

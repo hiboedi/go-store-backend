@@ -153,11 +153,26 @@ func ToProductResponsesHiddenStore(products []Product) []ProductResponseHiddenSt
 	return responses
 }
 
-func ToProductResponses(products []Product) []ProductResponse {
-	var responses []ProductResponse
+func ToProductResponses(products []Product, pagination Pagination) ProductPagination {
+	var prodctResponse []ProductResponse
+	paginationResponse := PaginationResponse{
+		Total:       pagination.Total,
+		CurrentPage: pagination.CurrentPage,
+		PerPage:     pagination.PerPage,
+		LastPage:    pagination.LastPage,
+	}
+	var responses ProductPagination
 
 	for _, product := range products {
-		responses = append(responses, ToProductResponse(product))
+		prodctResponse = append(prodctResponse, ToProductResponse(product))
 	}
+
+	responses.Pagination = paginationResponse
+	responses.Product = prodctResponse
 	return responses
+}
+
+type ProductPagination struct {
+	Pagination PaginationResponse
+	Product    []ProductResponse
 }
