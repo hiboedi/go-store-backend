@@ -4,6 +4,7 @@ import (
 	"context"
 
 	"github.com/go-playground/validator/v10"
+	"github.com/google/uuid"
 	"github.com/hiboedi/go-store-backend/app/exceptions"
 	"github.com/hiboedi/go-store-backend/app/helpers"
 	"github.com/hiboedi/go-store-backend/app/web/models"
@@ -41,6 +42,7 @@ func (s *ColorServiceImpl) Create(ctx context.Context, request models.ColorCreat
 	defer helpers.CommitOrRollback(tx)
 
 	color := models.Color{
+		ID:      uuid.New().String(),
 		Name:    request.Name,
 		Value:   request.Value,
 		StoreID: request.StoreID,

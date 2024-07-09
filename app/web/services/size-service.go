@@ -4,6 +4,7 @@ import (
 	"context"
 
 	"github.com/go-playground/validator/v10"
+	"github.com/google/uuid"
 	"github.com/hiboedi/go-store-backend/app/exceptions"
 	"github.com/hiboedi/go-store-backend/app/helpers"
 	"github.com/hiboedi/go-store-backend/app/web/models"
@@ -41,6 +42,7 @@ func (s *SizeServiceImpl) Create(ctx context.Context, request models.SizeCreate)
 	defer helpers.CommitOrRollback(tx)
 
 	size := models.Size{
+		ID:      uuid.New().String(),
 		StoreID: request.StoreID,
 		Name:    request.Name,
 		Value:   request.Value,

@@ -4,7 +4,6 @@ import (
 	"context"
 	"math"
 
-	"github.com/google/uuid"
 	"github.com/hiboedi/go-store-backend/app/helpers"
 	"github.com/hiboedi/go-store-backend/app/web/models"
 	"gorm.io/gorm"
@@ -26,89 +25,23 @@ func NewProductRepository() ProductRepository {
 }
 
 func (r *ProductRepositoryImpl) CreateProduct(ctx context.Context, db *gorm.DB, product models.Product) (models.Product, error) {
-	productId := uuid.New().String()
 
-	productModel := models.Product{
-		ID:         productId,
-		StoreID:    product.StoreID,
-		CategoryID: product.CategoryID,
-		Name:       product.Name,
-		Price:      product.Price,
-		Stock:      product.Stock,
-		IsFeatured: product.IsFeatured,
-		IsArchived: product.IsArchived,
-		SizeID:     product.SizeID,
-		ColorID:    product.ColorID,
-	}
-
-	err := db.WithContext(ctx).Save(&productModel).Error
+	err := db.WithContext(ctx).Save(&product).Error
 	if err != nil {
 		return models.Product{}, err
 	}
 
-	var images []models.Image
-	for _, image := range product.Images {
-		image.ID = uuid.New().String()
-		image.ProductID = productId
-		if err := db.WithContext(ctx).Create(&image).Error; err != nil {
-			return models.Product{}, err
-		}
-		images = append(images, image)
-	}
-
-	productModel.Images = images
-
-	err = db.WithContext(ctx).Save(&productModel).Error
-	if err != nil {
-		return models.Product{}, err
-	}
-
-	return productModel, nil
+	return product, nil
 }
 
 func (r *ProductRepositoryImpl) UpdateProduct(ctx context.Context, db *gorm.DB, product models.Product) (models.Product, error) {
-	var existingImages []models.Image
-	err := db.WithContext(ctx).Model(&models.Image{}).Where("product_id = ?", product.ID).Find(&existingImages).Error
-	helpers.PanicIfError(err)
 
-	updatedImages := []models.Image{}
-	for _, image := range existingImages {
-		for _, productImage := range product.Images {
-			productImage.ID = image.ID
-			productImage.ProductID = image.ProductID
-			productImage.CreatedAt = image.CreatedAt
-			productImage.UpdatedAt = image.UpdatedAt
-
-			if err := db.WithContext(ctx).Model(&models.Image{}).Where("id = ?", image.ID).Updates(&productImage).Error; err != nil {
-				return models.Product{}, err
-			}
-
-			updatedImages = append(updatedImages, productImage)
-		}
-	}
-
-	productModel := models.Product{
-		ID:         product.ID,
-		StoreID:    product.StoreID,
-		CategoryID: product.CategoryID,
-		Name:       product.Name,
-		Price:      product.Price,
-		Stock:      product.Stock,
-		IsFeatured: product.IsFeatured,
-		IsArchived: product.IsArchived,
-		SizeID:     product.SizeID,
-		Images:     updatedImages,
-		ColorID:    product.ColorID,
-		CreatedAt:  product.CreatedAt,
-		UpdatedAt:  product.UpdatedAt,
-	}
-
-	err = db.WithContext(ctx).Model(&models.Product{}).Where("id = ?", product.ID).Updates(&productModel).Error
+	err := db.WithContext(ctx).Model(&models.Product{}).Where("id = ?", product.ID).Updates(&product).Error
 	if err != nil {
 		return models.Product{}, err
 	}
 
-	return productModel, nil
+	return product, nil
 }
 
 func (r *ProductRepositoryImpl) DeleteProduct(ctx context.Context, db *gorm.DB, product models.Product) error {
@@ -134,7 +67,7 @@ func (r *ProductRepositoryImpl) GetProductById(ctx context.Context, db *gorm.DB,
 		Preload("Size").
 		Preload("Color").
 		Preload("Images").
-		Preload("OrderItems").
+		Preload("CartItems").
 		Where("id = ?", productId).
 		Take(&product).
 		Error
@@ -160,7 +93,7 @@ func (r *ProductRepositoryImpl) FindAllProducts(ctx context.Context, db *gorm.DB
 		Preload("Size").
 		Preload("Color").
 		Preload("Images").
-		Preload("OrderItems").
+		Preload("CartItems").
 		Offset(int(offset)).
 		Limit(int(limit)).
 		Find(&products).

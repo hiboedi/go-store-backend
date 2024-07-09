@@ -6,47 +6,53 @@ import (
 	"strings"
 
 	"github.com/hiboedi/go-store-backend/app/auth"
+	"github.com/hiboedi/go-store-backend/app/exceptions"
 	"github.com/hiboedi/go-store-backend/app/helpers"
 )
-
-type AuthMiddleware struct {
-	Handler http.Handler
-}
-
-func NewAuthMiddleware(handler http.Handler) *AuthMiddleware {
-	return &AuthMiddleware{Handler: handler}
-}
 
 func isPublicRoute(r *http.Request) bool {
 	return (r.URL.Path == "/api/login" || r.URL.Path == "/api/signup") && r.Method == "POST"
 }
 
-func (middleware *AuthMiddleware) ServeHTTP(w http.ResponseWriter, r *http.Request) {
-	if isPublicRoute(r) {
-		middleware.Handler.ServeHTTP(w, r)
-		return
-	}
-
-	tokenString := r.Header.Get("Authorization")
-	if tokenString == "" {
-		http.Error(w, "Missing authorization header", http.StatusUnauthorized)
-		return
-	}
-
-	tokenString = strings.TrimPrefix(tokenString, "Bearer ")
-	if err := auth.VerifyToken(tokenString); err != nil {
-		http.Error(w, fmt.Sprintf("Invalid token: %v", err), http.StatusUnauthorized)
-		return
-	}
-
-	if _, err := r.Cookie(helpers.UserSession); err != nil {
-		if err == http.ErrNoCookie {
-			http.Redirect(w, r, "/api/login", http.StatusFound)
+func AuthMiddleware(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if isPublicRoute(r) {
+			next.ServeHTTP(w, r)
 			return
 		}
-		http.Error(w, "Invalid user cookie", http.StatusBadRequest)
-		return
-	}
 
-	middleware.Handler.ServeHTTP(w, r)
+		tokenString := r.Header.Get("Authorization")
+		if tokenString == "" {
+			http.Error(w, "Missing authorization header", http.StatusUnauthorized)
+			return
+		}
+
+		tokenString = strings.TrimPrefix(tokenString, "Bearer ")
+		if err := auth.VerifyToken(tokenString); err != nil {
+			http.Error(w, fmt.Sprintf("Invalid token: %v", err), http.StatusUnauthorized)
+			return
+		}
+
+		if _, err := r.Cookie(helpers.UserSession); err != nil {
+			if err == http.ErrNoCookie {
+				http.Redirect(w, r, "/api/login", http.StatusFound)
+				return
+			}
+			http.Error(w, "Invalid user cookie", http.StatusBadRequest)
+			return
+		}
+
+		next.ServeHTTP(w, r)
+	})
+}
+
+func RecoverMiddleware(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		defer func() {
+			if err := recover(); err != nil {
+				exceptions.ErrorHandler(w, r, err)
+			}
+		}()
+		next.ServeHTTP(w, r)
+	})
 }

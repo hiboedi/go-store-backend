@@ -3,7 +3,6 @@ package repositories
 import (
 	"context"
 
-	"github.com/google/uuid"
 	"github.com/hiboedi/go-store-backend/app/helpers"
 	"github.com/hiboedi/go-store-backend/app/web/models"
 	"gorm.io/gorm"
@@ -23,20 +22,11 @@ func NewUserRepository() UserRepository {
 }
 
 func (r *UserRepositoryImpl) Create(ctx context.Context, db *gorm.DB, user models.User) (models.User, error) {
-	hashPassword, _ := helpers.MakePassword(user.Password)
 
-	userModel := models.User{
-
-		ID:       uuid.New().String(),
-		Name:     user.Name,
-		Email:    user.Email,
-		Password: hashPassword,
-	}
-
-	err := db.WithContext(ctx).Create(&userModel).Error
+	err := db.WithContext(ctx).Create(&user).Error
 	helpers.PanicIfError(err)
 
-	return userModel, nil
+	return user, nil
 }
 
 func (r *UserRepositoryImpl) GetUserByEmail(ctx context.Context, db *gorm.DB, email string) (models.User, error) {

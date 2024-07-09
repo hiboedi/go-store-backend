@@ -3,7 +3,6 @@ package repositories
 import (
 	"context"
 
-	"github.com/google/uuid"
 	"github.com/hiboedi/go-store-backend/app/helpers"
 	"github.com/hiboedi/go-store-backend/app/web/models"
 	"gorm.io/gorm"
@@ -25,32 +24,20 @@ func NewStoreRepository() StoreRepository {
 }
 
 func (r *StoreRepositoryImpl) CreateStore(ctx context.Context, db *gorm.DB, store models.Store) (models.Store, error) {
-	storeModel := models.Store{
-		ID:     uuid.New().String(),
-		Name:   store.Name,
-		UserID: store.UserID,
-	}
 
-	err := db.WithContext(ctx).Preload("User").Create(&storeModel).Error
+	err := db.WithContext(ctx).Preload("User").Create(&store).Error
 	helpers.PanicIfError(err)
 
-	return storeModel, nil
+	return store, nil
 }
 
 func (r *StoreRepositoryImpl) UpdateStore(ctx context.Context, db *gorm.DB, store models.Store) (models.Store, error) {
-	storeModel := models.Store{
-		ID:        store.ID,
-		Name:      store.Name,
-		UserID:    store.UserID,
-		CreatedAt: store.CreatedAt,
-		UpdatedAt: store.UpdatedAt,
-	}
 
-	err := db.WithContext(ctx).Model(&models.Store{}).Where("id = ?", store.ID).Updates(&storeModel).Error
+	err := db.WithContext(ctx).Model(&models.Store{}).Where("id = ?", store.ID).Updates(&store).Error
 
 	helpers.PanicIfError(err)
 
-	return storeModel, nil
+	return store, nil
 }
 
 func (r *StoreRepositoryImpl) GetStoreById(ctx context.Context, db *gorm.DB, storeId string) (models.Store, error) {

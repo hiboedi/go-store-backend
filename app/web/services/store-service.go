@@ -4,6 +4,7 @@ import (
 	"context"
 
 	"github.com/go-playground/validator/v10"
+	"github.com/google/uuid"
 	"github.com/hiboedi/go-store-backend/app/exceptions"
 	"github.com/hiboedi/go-store-backend/app/helpers"
 	"github.com/hiboedi/go-store-backend/app/web/models"
@@ -41,6 +42,7 @@ func (s *StoreServiceImpl) Create(ctx context.Context, request models.StoreCreat
 	defer helpers.CommitOrRollback(tx)
 
 	store := models.Store{
+		ID:     uuid.New().String(),
 		Name:   request.Name,
 		UserID: request.UserID,
 	}

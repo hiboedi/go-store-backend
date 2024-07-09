@@ -25,18 +25,18 @@ func main() {
 	colorRepository := repositories.NewColorRepository()
 	sizeRepository := repositories.NewSizeRepository()
 	productRepository := repositories.NewProductRepository()
+	imageRepository := repositories.NewImageRepository()
 	orderRepository := repositories.NewOrderRepository()
-	orderItemRepository := repositories.NewOrderItemRepository()
+	cartRepository := repositories.NewCartRepository()
 
-	userService := services.NewUserService(userRepository, db, validate)
+	userService := services.NewUserService(userRepository, db, cartRepository, validate)
 	storeService := services.NewStoreService(storeRepository, db, validate)
 	billboardService := services.NewBillboardService(billboardRepository, db, validate)
 	categoryService := services.NewCategoryService(categoryRepository, db, validate)
 	colorService := services.NewColorService(colorRepository, db, validate)
 	sizeService := services.NewSizeService(sizeRepository, db, validate)
-	orderItemService := services.NewOrderItemService(orderItemRepository, db, validate)
-	productService := services.NewProductService(productRepository, db, validate)
-	orderService := services.NewOrderService(orderRepository, orderItemService, db, validate)
+	productService := services.NewProductService(productRepository, imageRepository, db, validate)
+	orderService := services.NewOrderService(orderRepository, db)
 
 	userController := controllers.NewUserController(userService)
 	storeController := controllers.NewStoreController(storeService)
@@ -60,14 +60,14 @@ func main() {
 
 	database.DBMigrate()
 
-	authRouter := middleware.NewAuthMiddleware(router)
+	authRouter := middleware.AuthMiddleware(router)
 
 	server := http.Server{
-		Addr:    "localhost:8000",
+		Addr:    "localhost:9000",
 		Handler: authRouter,
 	}
 
-	fmt.Println("Starting server on port :8000")
+	fmt.Println("Starting server on port :9000")
 	err := server.ListenAndServe()
 	helpers.PanicIfError(err)
 }

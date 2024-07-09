@@ -3,7 +3,6 @@ package repositories
 import (
 	"context"
 
-	"github.com/google/uuid"
 	"github.com/hiboedi/go-store-backend/app/helpers"
 	"github.com/hiboedi/go-store-backend/app/web/models"
 	"gorm.io/gorm"
@@ -25,35 +24,18 @@ func NewBillboardRepository() BillboardRepository {
 }
 
 func (r *BillboardRepositoryImpl) CreateBillboard(ctx context.Context, db *gorm.DB, billboard models.Billboard) (models.Billboard, error) {
-
-	billboardModel := models.Billboard{
-		ID:       uuid.New().String(),
-		Label:    billboard.Label,
-		StoreID:  billboard.StoreID,
-		ImageURL: billboard.ImageURL,
-	}
-
-	err := db.WithContext(ctx).Create(&billboardModel).Error
+	err := db.WithContext(ctx).Create(&billboard).Error
 	helpers.PanicIfError(err)
 
-	return billboardModel, nil
+	return billboard, nil
 }
 
 func (r *BillboardRepositoryImpl) UpdateBillboard(ctx context.Context, db *gorm.DB, billboard models.Billboard) (models.Billboard, error) {
 
-	billboardModel := models.Billboard{
-		ID:        billboard.ID,
-		Label:     billboard.Label,
-		StoreID:   billboard.StoreID,
-		ImageURL:  billboard.ImageURL,
-		CreatedAt: billboard.CreatedAt,
-		UpdatedAt: billboard.UpdatedAt,
-	}
-
-	err := db.WithContext(ctx).Model(&models.Billboard{}).Where("id = ?", billboard.ID).Updates(&billboardModel).Error
+	err := db.WithContext(ctx).Model(&models.Billboard{}).Where("id = ?", billboard.ID).Updates(&billboard).Error
 	helpers.PanicIfError(err)
 
-	return billboardModel, nil
+	return billboard, nil
 }
 
 func (r *BillboardRepositoryImpl) GetBillboardById(ctx context.Context, db *gorm.DB, billboardId string) (models.Billboard, error) {

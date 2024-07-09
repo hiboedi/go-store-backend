@@ -7,6 +7,7 @@ type User struct {
 	Name      string    `json:"name" gorm:"not null;type:varchar(50)"`
 	Email     string    `json:"email" gorm:"not null;unique;type:varchar(100)"`
 	Password  string    `json:"password" gorm:"not null;type:varchar(100)"`
+	Phone     string    `json:"phone"`
 	Stores    []Store   `json:"stores" `
 	CreatedAt time.Time `json:"created_at" gorm:"autoCreateTime"`
 	UpdatedAt time.Time `json:"updated_at" gorm:"autoUpdateTime"`
@@ -30,12 +31,14 @@ type UserLoginResponse struct {
 type UserCreate struct {
 	Name     string `validate:"required,min=4,max=50"`
 	Email    string `validate:"required,email"`
+	Phone    string `validate:"required,min=8,max=13"`
 	Password string `validate:"required,min=6,max=50"`
 }
 
 type UserUpdate struct {
 	Name     string `validate:"required,min=4,max=50"`
 	Email    string `validate:"required,email"`
+	Phone    string `validate:"required,min=8,max=13"`
 	Password string `validate:"required,min=6,max=50"`
 }
 

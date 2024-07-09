@@ -4,6 +4,7 @@ import (
 	"context"
 
 	"github.com/go-playground/validator/v10"
+	"github.com/google/uuid"
 	"github.com/hiboedi/go-store-backend/app/exceptions"
 	"github.com/hiboedi/go-store-backend/app/helpers"
 	"github.com/hiboedi/go-store-backend/app/web/models"
@@ -41,6 +42,7 @@ func (s *BillboardServiceImpl) Create(ctx context.Context, request models.Billbo
 	defer helpers.CommitOrRollback(tx)
 
 	billboard := models.Billboard{
+		ID:       uuid.New().String(),
 		Label:    request.Label,
 		ImageURL: request.ImageURL,
 		StoreID:  request.StoreID,

@@ -3,7 +3,6 @@ package repositories
 import (
 	"context"
 
-	"github.com/google/uuid"
 	"github.com/hiboedi/go-store-backend/app/helpers"
 	"github.com/hiboedi/go-store-backend/app/web/models"
 	"gorm.io/gorm"
@@ -25,33 +24,19 @@ func NewSizeRepository() SizeRepository {
 }
 
 func (r *SizeRepositoryImpl) CreateSize(ctx context.Context, db *gorm.DB, size models.Size) (models.Size, error) {
-	sizeModel := models.Size{
-		ID:      uuid.New().String(),
-		StoreID: size.StoreID,
-		Name:    size.Name,
-		Value:   size.Value,
-	}
 
-	err := db.WithContext(ctx).Create(&sizeModel).Error
+	err := db.WithContext(ctx).Create(&size).Error
 	helpers.PanicIfError(err)
 
-	return sizeModel, nil
+	return size, nil
 }
 
 func (r *SizeRepositoryImpl) UpdateSize(ctx context.Context, db *gorm.DB, size models.Size) (models.Size, error) {
-	sizeModel := models.Size{
-		ID:        size.ID,
-		StoreID:   size.StoreID,
-		Name:      size.Name,
-		Value:     size.Value,
-		CreatedAt: size.CreatedAt,
-		UpdatedAt: size.UpdatedAt,
-	}
 
-	err := db.WithContext(ctx).Model(&models.Size{}).Where("id = ?", size.ID).Updates(&sizeModel).Error
+	err := db.WithContext(ctx).Model(&models.Size{}).Where("id = ?", size.ID).Updates(&size).Error
 	helpers.PanicIfError(err)
 
-	return sizeModel, nil
+	return size, nil
 }
 
 func (r *SizeRepositoryImpl) GetSizeById(ctx context.Context, db *gorm.DB, sizeId string) (models.Size, error) {

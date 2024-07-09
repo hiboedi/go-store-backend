@@ -2,6 +2,7 @@ package router
 
 import (
 	"github.com/gorilla/mux"
+	"github.com/hiboedi/go-store-backend/app/middleware"
 	"github.com/hiboedi/go-store-backend/app/web/controllers"
 )
 
@@ -13,7 +14,7 @@ func RouterInit(
 	colorController controllers.CategoryController,
 	sizeController controllers.SizeController,
 	productController controllers.ProductController,
-	orderController controllers.ProductController,
+	orderController controllers.OrderController,
 ) *mux.Router {
 	router := mux.NewRouter()
 
@@ -56,14 +57,9 @@ func RouterInit(
 	router.HandleFunc("/api/{storeId}/products/{productId}", productController.FindById).Methods("GET")
 	router.HandleFunc("/api/{storeId}/products/{productId}", productController.Delete).Methods("DELETE")
 
-	router.HandleFunc("/api/{storeId}/orders", orderController.Create).Methods("POST")
-	router.HandleFunc("/api/{storeId}/orders", orderController.FindAll).Methods("GET")
-	router.HandleFunc("/api/{storeId}/orders/{orders}", orderController.Update).Methods("PUT")
-	router.HandleFunc("/api/{storeId}/orders/{orders}", orderController.FindById).Methods("GET")
-	router.HandleFunc("/api/{storeId}/orders/{orders}", orderController.Delete).Methods("DELETE")
+	router.HandleFunc("/api/{storeId}/orders", orderController.FindAllOrder).Methods("GET")
 
-	// Middleware
-	// router.Use(middleware.RecoverMiddleware)
+	router.Use(middleware.RecoverMiddleware)
 
 	return router
 }

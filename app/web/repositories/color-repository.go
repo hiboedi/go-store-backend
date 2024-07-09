@@ -3,7 +3,6 @@ package repositories
 import (
 	"context"
 
-	"github.com/google/uuid"
 	"github.com/hiboedi/go-store-backend/app/helpers"
 	"github.com/hiboedi/go-store-backend/app/web/models"
 	"gorm.io/gorm"
@@ -25,30 +24,16 @@ func NewColorRepository() ColorRepository {
 }
 
 func (r *ColorRepositoryImpl) CreateColor(ctx context.Context, db *gorm.DB, color models.Color) (models.Color, error) {
-	colorModel := models.Color{
-		ID:      uuid.New().String(),
-		Name:    color.Name,
-		StoreID: color.StoreID,
-		Value:   color.Value,
-	}
 
-	err := db.WithContext(ctx).Create(&colorModel).Error
+	err := db.WithContext(ctx).Create(&color).Error
 	helpers.PanicIfError(err)
 
-	return colorModel, nil
+	return color, nil
 }
 
 func (r *ColorRepositoryImpl) UpdateColor(ctx context.Context, db *gorm.DB, color models.Color) (models.Color, error) {
 
-	colorModel := models.Color{
-		ID:        color.ID,
-		Name:      color.Name,
-		StoreID:   color.StoreID,
-		Value:     color.Value,
-		CreatedAt: color.CreatedAt,
-		UpdatedAt: color.UpdatedAt,
-	}
-	err := db.WithContext(ctx).Model(&models.Color{}).Where("id = ?", color.ID).Updates(&colorModel).Error
+	err := db.WithContext(ctx).Model(&models.Color{}).Where("id = ?", color.ID).Updates(&color).Error
 	helpers.PanicIfError(err)
 
 	return color, nil

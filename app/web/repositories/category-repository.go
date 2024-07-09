@@ -3,7 +3,6 @@ package repositories
 import (
 	"context"
 
-	"github.com/google/uuid"
 	"github.com/hiboedi/go-store-backend/app/helpers"
 	"github.com/hiboedi/go-store-backend/app/web/models"
 	"gorm.io/gorm"
@@ -25,36 +24,19 @@ func NewCategoryRepository() CategoryRepository {
 }
 
 func (r *CategoryRepositoryImpl) CreateCategory(ctx context.Context, db *gorm.DB, category models.Category) (models.Category, error) {
-	categoryModel := models.Category{
-		ID:          uuid.New().String(),
-		StoreID:     category.StoreID,
-		BillboardID: category.BillboardID,
-		Name:        category.Name,
-	}
 
-	err := db.WithContext(ctx).Create(&categoryModel).Error
+	err := db.WithContext(ctx).Create(&category).Error
 	helpers.PanicIfError(err)
 
-	return categoryModel, nil
+	return category, nil
 }
 
 func (r *CategoryRepositoryImpl) UpdateCategory(ctx context.Context, db *gorm.DB, category models.Category) (models.Category, error) {
-	categoryModel := models.Category{
-		ID:          category.ID,
-		StoreID:     category.StoreID,
-		BillboardID: category.BillboardID,
-		Name:        category.Name,
-		CreatedAt:   category.CreatedAt,
-		UpdatedAt:   category.UpdatedAt,
-	}
 
-	err := db.WithContext(ctx).Model(&models.Category{}).Where("id = ?", category.ID).Updates(&categoryModel).Error
+	err := db.WithContext(ctx).Model(&models.Category{}).Where("id = ?", category.ID).Updates(&category).Error
 	helpers.PanicIfError(err)
 
-	categoryModel.ID = category.ID
-	categoryModel.StoreID = category.StoreID
-
-	return categoryModel, nil
+	return category, nil
 }
 
 func (r *CategoryRepositoryImpl) DeleteCategory(ctx context.Context, db *gorm.DB, category models.Category) error {

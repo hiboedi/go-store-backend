@@ -2,8 +2,10 @@ package services
 
 import (
 	"context"
+	"time"
 
 	"github.com/go-playground/validator/v10"
+	"github.com/google/uuid"
 	"github.com/hiboedi/go-store-backend/app/exceptions"
 	"github.com/hiboedi/go-store-backend/app/helpers"
 	"github.com/hiboedi/go-store-backend/app/web/models"
@@ -13,6 +15,7 @@ import (
 
 type ProductServiceImpl struct {
 	ProductRepository repositories.ProductRepository
+	ImageRepository   repositories.ImageRepositoy
 	DB                *gorm.DB
 	Validate          *validator.Validate
 }
@@ -25,9 +28,10 @@ type ProductService interface {
 	FindAll(ctx context.Context, storeId string, pageParam int64) models.ProductPagination
 }
 
-func NewProductService(productRepo repositories.ProductRepository, db *gorm.DB, validate *validator.Validate) ProductService {
+func NewProductService(productRepo repositories.ProductRepository, imageRepo repositories.ImageRepositoy, db *gorm.DB, validate *validator.Validate) ProductService {
 	return &ProductServiceImpl{
 		ProductRepository: productRepo,
+		ImageRepository:   imageRepo,
 		DB:                db,
 		Validate:          validate,
 	}
@@ -40,20 +44,37 @@ func (s *ProductServiceImpl) Create(ctx context.Context, request models.ProductC
 	tx := s.DB.Begin()
 	defer helpers.CommitOrRollback(tx)
 
+	productId := uuid.New().String()
+	priceAfterDiscount := request.Price * float64(request.DiscountPercent) / 100
+
 	product := models.Product{
-		StoreID:    request.StoreID,
-		CategoryID: request.CategoryID,
-		Name:       request.Name,
-		Stock:      request.Stock,
-		Price:      request.Price,
-		IsFeatured: request.IsFeatured,
-		IsArchived: request.IsArchived,
-		SizeID:     request.SizeID,
-		ColorID:    request.ColorID,
-		Images:     request.Images,
-		OrderItems: request.OrderItems,
+		ID:                 productId,
+		StoreID:            request.StoreID,
+		CategoryID:         request.CategoryID,
+		Name:               request.Name,
+		Price:              request.Price,
+		DiscountPercent:    request.DiscountPercent,
+		PriceAfterDiscount: priceAfterDiscount,
+		Stock:              request.Stock,
+		IsFeatured:         request.IsFeatured,
+		IsArchived:         request.IsArchived,
+		SizeID:             request.SizeID,
+		ColorID:            request.ColorID,
 	}
 
+	_, err = s.ProductRepository.CreateProduct(ctx, tx, product)
+	helpers.PanicIfError(err)
+
+	var images []models.Image
+	for _, image := range request.Images {
+		image.ID = uuid.New().String()
+		image.ProductID = productId
+		createdimage, err := s.ImageRepository.CreateImage(ctx, tx, image)
+		helpers.PanicIfError(err)
+		images = append(images, createdimage)
+	}
+
+	product.Images = images
 	data, err := s.ProductRepository.CreateProduct(ctx, tx, product)
 	helpers.PanicIfError(err)
 
@@ -72,6 +93,22 @@ func (s *ProductServiceImpl) Update(ctx context.Context, request models.ProductU
 		panic(exceptions.NewNotFoundError(err.Error()))
 	}
 
+	var updatedImages []models.Image
+
+	for _, updateImage := range request.Images {
+		for _, existImage := range product.Images {
+			updateImage.ID = existImage.ID
+			updateImage.ProductID = existImage.ProductID
+			updateImage.CreatedAt = existImage.CreatedAt
+			updateImage.UpdatedAt = time.Now()
+			err := tx.WithContext(ctx).Model(&models.Image{}).Where("id = ?", existImage.ID).Updates(updateImage).Error
+			helpers.PanicIfError(err)
+		}
+		updatedImages = append(updatedImages, updateImage)
+	}
+
+	priceAfterDiscount := product.Price * float64(product.DiscountPercent) / 100
+
 	product.CategoryID = request.CategoryID
 	product.StoreID = request.StoreID
 	product.Name = request.Name
@@ -81,9 +118,9 @@ func (s *ProductServiceImpl) Update(ctx context.Context, request models.ProductU
 	product.SizeID = request.SizeID
 	product.ColorID = request.ColorID
 	product.Stock = request.Stock
-	product.Images = request.Images
-	product.OrderItems = request.OrderItems
-	product.Images = request.Images
+	product.Images = updatedImages
+	product.PriceAfterDiscount = priceAfterDiscount
+	product.DiscountPercent = request.DiscountPercent
 
 	data, err := s.ProductRepository.UpdateProduct(ctx, tx, product)
 	helpers.PanicIfError(err)
