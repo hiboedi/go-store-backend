@@ -12,7 +12,29 @@ import (
 	"github.com/hiboedi/go-store-backend/app/web/repositories"
 	"github.com/hiboedi/go-store-backend/app/web/router"
 	"github.com/hiboedi/go-store-backend/app/web/services"
+	_ "github.com/hiboedi/go-store-backend/docs"
+	httpSwagger "github.com/swaggo/http-swagger"
 )
+
+// @title GoStore API
+// @version 1.0
+// @description Sample of GoStore Documentation.
+// @termsOfService https://www.github.com/hiboedi
+
+// @contact.name hi.boedi8@gmail.com
+// @contact.url https://www.github.com/hiboedi
+// @contact.email hi.boedi8@gmail.com
+
+// @license.name Apache 2.0
+// @license.url http://www.apache.org/licenses/LICENSE-2.0.html
+
+// @host localhost:8000
+// @BasePath /
+
+// @securityDefinitions.apikey BearerAuth
+// @in header
+// @name Authorization
+// @description Bearer token authentication
 
 func main() {
 	db := database.InitializeDB()
@@ -58,16 +80,18 @@ func main() {
 		orderController,
 	)
 
+	router.PathPrefix("/api/swagger/").Handler(httpSwagger.WrapHandler)
+
 	database.DBMigrate()
 
-	authRouter := middleware.AuthMiddleware(router)
+	authRouter := middleware.RedirectSwagger(middleware.RecoverMiddleware(middleware.AuthMiddleware(router)))
 
 	server := http.Server{
-		Addr:    "localhost:9000",
+		Addr:    "localhost:8000",
 		Handler: authRouter,
 	}
 
-	fmt.Println("Starting server on port :9000")
+	fmt.Println("Starting server on port :8000")
 	err := server.ListenAndServe()
 	helpers.PanicIfError(err)
 }

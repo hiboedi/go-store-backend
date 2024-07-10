@@ -1,0 +1,138 @@
+basePath: /
+definitions:
+  models.UserCreate:
+    properties:
+      email:
+        type: string
+      name:
+        maxLength: 50
+        minLength: 4
+        type: string
+      password:
+        maxLength: 50
+        minLength: 6
+        type: string
+      phone:
+        maxLength: 13
+        minLength: 8
+        type: string
+    required:
+    - email
+    - name
+    - password
+    - phone
+    type: object
+  models.UserLogin:
+    properties:
+      email:
+        type: string
+      password:
+        type: string
+    required:
+    - email
+    - password
+    type: object
+  models.UserResponse:
+    properties:
+      created_at:
+        type: string
+      email:
+        type: string
+      id:
+        type: string
+      name:
+        type: string
+      updated_at:
+        type: string
+    type: object
+  web.WebResponse:
+    properties:
+      code:
+        type: integer
+      data: {}
+      status:
+        type: string
+    type: object
+host: localhost:8000
+info:
+  contact:
+    email: hi.boedi8@gmail.com
+    name: hi.boedi8@gmail.com
+    url: https://www.github.com/hiboedi
+  description: Sample of GoStore Documentation.
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  termsOfService: https://www.github.com/hiboedi
+  title: GoStore API
+  version: "1.0"
+paths:
+  /api/login:
+    post:
+      consumes:
+      - application/json
+      description: Authenticate a user and set a session cookie
+      parameters:
+      - description: User Login
+        in: body
+        name: user
+        required: true
+        schema:
+          $ref: '#/definitions/models.UserLogin'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/web.WebResponse'
+            - properties:
+                data:
+                  $ref: '#/definitions/models.UserResponse'
+              type: object
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/web.WebResponse'
+      summary: Log in a user
+      tags:
+      - Users
+  /api/signup:
+    post:
+      consumes:
+      - application/json
+      description: Create a new user account
+      parameters:
+      - description: User Sign Up
+        in: body
+        name: user
+        required: true
+        schema:
+          $ref: '#/definitions/models.UserCreate'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/web.WebResponse'
+            - properties:
+                data:
+                  $ref: '#/definitions/models.UserResponse'
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/web.WebResponse'
+      summary: Sign up a new user
+      tags:
+      - Users
+securityDefinitions:
+  BearerAuth:
+    description: Bearer token authentication
+    in: header
+    name: Authorization
+    type: apiKey
+swagger: "2.0"

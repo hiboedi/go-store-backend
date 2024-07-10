@@ -20,6 +20,7 @@ GoStore adalah aplikasi e-commerce yang saya bangun sebagai proyek pribadi. Apli
 - **Otentikasi**: Registrasi dan login pengguna dengan enkripsi password menggunakan bcrypt.
 - **Otorisasi**: Menggunakan JWT untuk mengamankan endpoint API.
 - **Manajemen Sesi**: Mengelola sesi pengguna untuk menjaga pengalaman pengguna.
+- **Swagger Documentation**: Dokumentasi API interaktif yang dapat diakses di [Swagger UI](http://localhost:8000/api/swagger).
 
 ## Instalasi
 
@@ -50,7 +51,7 @@ GoStore adalah aplikasi e-commerce yang saya bangun sebagai proyek pribadi. Apli
 4. Migrasi database:
 
    ```sh
-   go run main.go migrate
+   go run main.go
    ```
 
 5. Jalankan aplikasi:

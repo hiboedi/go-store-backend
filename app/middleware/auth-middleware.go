@@ -14,9 +14,19 @@ func isPublicRoute(r *http.Request) bool {
 	return (r.URL.Path == "/api/login" || r.URL.Path == "/api/signup") && r.Method == "POST"
 }
 
+func RedirectSwagger(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if strings.HasPrefix(r.URL.Path, "/api/swagger") && r.URL.Path == "/api/swagger" {
+			http.Redirect(w, r, "/api/swagger/index.html", http.StatusMovedPermanently)
+			return
+		}
+		next.ServeHTTP(w, r)
+	})
+}
+
 func AuthMiddleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		if isPublicRoute(r) {
+		if isPublicRoute(r) || strings.HasPrefix(r.URL.Path, "/api/swagger/") {
 			next.ServeHTTP(w, r)
 			return
 		}

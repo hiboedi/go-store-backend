@@ -24,6 +24,16 @@ func NewUserController(userService services.UserService) UserController {
 	}
 }
 
+// SignUp godoc
+// @Summary Sign up a new user
+// @Description Create a new user account
+// @Tags Users
+// @Accept json
+// @Produce json
+// @Param user body models.UserCreate true "User Sign Up"
+// @Success 200 {object} web.WebResponse{data=models.UserResponse}
+// @Failure 400 {object} web.WebResponse
+// @Router /api/signup [post]
 func (c *UserControllerImpl) SignUp(w http.ResponseWriter, r *http.Request) {
 	userSignUp := models.UserCreate{}
 	helpers.ToRequestBody(r, &userSignUp)
@@ -39,6 +49,16 @@ func (c *UserControllerImpl) SignUp(w http.ResponseWriter, r *http.Request) {
 	http.Redirect(w, r, "/api/login", http.StatusOK)
 }
 
+// Login godoc
+// @Summary Log in a user
+// @Description Authenticate a user and set a session cookie
+// @Tags Users
+// @Accept json
+// @Produce json
+// @Param user body models.UserLogin true "User Login"
+// @Success 200 {object} web.WebResponse{data=models.UserResponse}
+// @Failure 401 {object} web.WebResponse
+// @Router /api/login [post]
 func (c *UserControllerImpl) Login(w http.ResponseWriter, r *http.Request) {
 	userLogin := models.UserLogin{}
 	helpers.ToRequestBody(r, &userLogin)
