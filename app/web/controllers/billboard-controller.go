@@ -28,15 +28,26 @@ func NewBillboardController(billboardService services.BillboardService) Billboar
 	}
 }
 
+// Create billboard godoc
+// @Summary create billboard for the store
+// @Description create billboard for the store
+// @Tags Billboard
+// @Accept json
+// @Produce json
+// @Param billboard body models.BillboardCreate true "billboard create"
+// @Param storeId path string true "Store ID"
+// @Success 200 {object} web.WebResponse{data=models.BillboardResponse}
+// @Failure 401 {object} web.WebResponse
+// @Router /api/{storeId}/billboards [post]
+// @Security BearerAuth
 func (c *BillboardControllerImpl) Create(w http.ResponseWriter, r *http.Request) {
 	billboardCreateRequest := models.BillboardCreate{}
 	helpers.ToRequestBody(r, &billboardCreateRequest)
 
 	vars := mux.Vars(r)
 	storeId := vars["storeId"]
-	billboardCreateRequest.StoreID = storeId
 
-	billboardResponse := c.BillboardService.Create(r.Context(), billboardCreateRequest)
+	billboardResponse := c.BillboardService.Create(r.Context(), billboardCreateRequest, storeId)
 	webResponse := web.WebResponse{
 		Code:   http.StatusOK,
 		Status: "Ok",
@@ -46,6 +57,19 @@ func (c *BillboardControllerImpl) Create(w http.ResponseWriter, r *http.Request)
 	helpers.WriteResponseBody(w, webResponse)
 }
 
+// Update billboard godoc
+// @Summary Update billboard for the store
+// @Description Update billboard for the store
+// @Tags Billboard
+// @Accept json
+// @Produce json
+// @Param billboard body models.BillboardUpdate true "billboad Update"
+// @Param storeId path string true "Store ID"
+// @Param billboardId path string true "BIllboard ID"
+// @Success 200 {object} web.WebResponse{data=models.BillboardResponse}
+// @Failure 401 {object} web.WebResponse
+// @Router /api/{storeId}/billboards/{billboardId} [put]
+// @Security BearerAuth
 func (c *BillboardControllerImpl) Update(w http.ResponseWriter, r *http.Request) {
 	billboardUpdateRequest := models.BillboardUpdate{}
 	helpers.ToRequestBody(r, &billboardUpdateRequest)
@@ -63,6 +87,18 @@ func (c *BillboardControllerImpl) Update(w http.ResponseWriter, r *http.Request)
 	helpers.WriteResponseBody(w, webResponse)
 }
 
+// Delete billboard godoc
+// @Summary Delete billboard from the store
+// @Description Delete billboard from the store
+// @Tags Billboard
+// @Accept json
+// @Produce json
+// @Param storeId path string true "Store ID"
+// @Param billboardId path string true "BIllboard ID"
+// @Success 200 {object} web.WebResponse
+// @Failure 401 {object} web.WebResponse
+// @Router /api/{storeId}/billboards/{billboardId} [delete]
+// @Security BearerAuth
 func (c *BillboardControllerImpl) Delete(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	billboardId := vars["billboardId"]
@@ -75,6 +111,18 @@ func (c *BillboardControllerImpl) Delete(w http.ResponseWriter, r *http.Request)
 	helpers.WriteResponseBody(w, webResponse)
 }
 
+// FindById billboard godoc
+// @Summary FindById billboard from the store
+// @Description FindById billboard from the store
+// @Tags Billboard
+// @Accept json
+// @Produce json
+// @Param storeId path string true "Store ID"
+// @Param billboardId path string true "BIllboard ID"
+// @Success 200 {object} web.WebResponse{data=models.BillboardResponse}
+// @Failure 401 {object} web.WebResponse
+// @Router /api/{storeId}/billboards/{billboardId} [get]
+// @Security BearerAuth
 func (c *BillboardControllerImpl) FindById(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	billboardId := vars["billboardId"]
@@ -88,6 +136,17 @@ func (c *BillboardControllerImpl) FindById(w http.ResponseWriter, r *http.Reques
 	helpers.WriteResponseBody(w, webResponse)
 }
 
+// FindALl billboard godoc
+// @Summary Get all billboards for the store
+// @Description Get all billboards for the store
+// @Tags Billboard
+// @Accept json
+// @Produce json
+// @Param storeId path string true "Store ID"
+// @Success 200 {object} web.WebResponse{data=models.BillboardResponse}
+// @Failure 401 {object} web.WebResponse
+// @Router /api/{storeId}/billboards [get]
+// @Security BearerAuth
 func (c *BillboardControllerImpl) FindAll(w http.ResponseWriter, r *http.Request) {
 
 	vars := mux.Vars(r)

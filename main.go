@@ -12,14 +12,9 @@ import (
 	"github.com/hiboedi/go-store-backend/app/web/repositories"
 	"github.com/hiboedi/go-store-backend/app/web/router"
 	"github.com/hiboedi/go-store-backend/app/web/services"
-	_ "github.com/hiboedi/go-store-backend/docs"
+	docs "github.com/hiboedi/go-store-backend/docs"
 	httpSwagger "github.com/swaggo/http-swagger"
 )
-
-// @title GoStore API
-// @version 1.0
-// @description Sample of GoStore Documentation.
-// @termsOfService https://www.github.com/hiboedi
 
 // @contact.name hi.boedi8@gmail.com
 // @contact.url https://www.github.com/hiboedi
@@ -37,6 +32,15 @@ import (
 // @description Bearer token authentication
 
 func main() {
+
+	// swagger info
+	docs.SwaggerInfo.Title = "GoStore API"
+	docs.SwaggerInfo.Description = "Sample of GoStore Documentation."
+	docs.SwaggerInfo.Version = "1.0"
+	docs.SwaggerInfo.Host = "localhost:8000"
+	docs.SwaggerInfo.BasePath = "/"
+	docs.SwaggerInfo.Schemes = []string{"http", "https"}
+
 	db := database.InitializeDB()
 	validate := validator.New()
 
@@ -52,7 +56,7 @@ func main() {
 	cartRepository := repositories.NewCartRepository()
 
 	userService := services.NewUserService(userRepository, db, cartRepository, validate)
-	storeService := services.NewStoreService(storeRepository, db, validate)
+	storeService := services.NewStoreService(storeRepository, userRepository, db, validate)
 	billboardService := services.NewBillboardService(billboardRepository, db, validate)
 	categoryService := services.NewCategoryService(categoryRepository, db, validate)
 	colorService := services.NewColorService(colorRepository, db, validate)

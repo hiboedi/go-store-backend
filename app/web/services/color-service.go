@@ -19,8 +19,8 @@ type ColorServiceImpl struct {
 }
 
 type ColorService interface {
-	Create(ctx context.Context, request models.ColorCreate) models.ColorResponseHiddenStore
-	Update(ctx context.Context, request models.ColorUpdate, colorId string) models.ColorResponseHiddenStore
+	Create(ctx context.Context, request models.ColorCreate, storeId string) models.ColorResponse
+	Update(ctx context.Context, request models.ColorUpdate, colorId string) models.ColorResponse
 	Delete(ctx context.Context, colorId string)
 	FindById(ctx context.Context, colorId string) models.ColorResponse
 	FindAll(ctx context.Context, storeId string) []models.ColorResponse
@@ -34,7 +34,7 @@ func NewColorService(colorRepo repositories.ColorRepository, db *gorm.DB, valida
 	}
 }
 
-func (s *ColorServiceImpl) Create(ctx context.Context, request models.ColorCreate) models.ColorResponseHiddenStore {
+func (s *ColorServiceImpl) Create(ctx context.Context, request models.ColorCreate, storeId string) models.ColorResponse {
 	err := s.Validate.Struct(request)
 	helpers.PanicIfError(err)
 
@@ -45,16 +45,16 @@ func (s *ColorServiceImpl) Create(ctx context.Context, request models.ColorCreat
 		ID:      uuid.New().String(),
 		Name:    request.Name,
 		Value:   request.Value,
-		StoreID: request.StoreID,
+		StoreID: storeId,
 	}
 
 	data, err := s.ColorRepository.CreateColor(ctx, tx, color)
 	helpers.PanicIfError(err)
 
-	return models.ToColorResponseHiddenStore(data)
+	return models.ToColorResponse(data)
 }
 
-func (s *ColorServiceImpl) Update(ctx context.Context, request models.ColorUpdate, colorId string) models.ColorResponseHiddenStore {
+func (s *ColorServiceImpl) Update(ctx context.Context, request models.ColorUpdate, colorId string) models.ColorResponse {
 	err := s.Validate.Struct(request)
 	helpers.PanicIfError(err)
 
@@ -72,7 +72,7 @@ func (s *ColorServiceImpl) Update(ctx context.Context, request models.ColorUpdat
 	data, err := s.ColorRepository.UpdateColor(ctx, tx, color)
 	helpers.PanicIfError(err)
 
-	return models.ToColorResponseHiddenStore(data)
+	return models.ToColorResponse(data)
 }
 
 func (s *ColorServiceImpl) Delete(ctx context.Context, colorId string) {

@@ -18,66 +18,67 @@ type Store struct {
 }
 
 type StoreResponse struct {
-	ID         string                         `json:"id"`
-	Name       string                         `json:"name"`
-	UserID     string                         `json:"user_id"`
-	User       User                           `json:"user"`
-	Billboards []BillboardResponseHiddenStore `json:"billboards"`
-	Categories []Category                     `json:"categories"`
-	Sizes      []Size                         `json:"sizes"`
-	Colors     []Color                        `json:"colors"`
-	Products   []Product                      `json:"products"`
-	Orders     []Order                        `json:"orders"`
-	CreatedAt  time.Time                      `json:"created_at"`
-	UpdatedAt  time.Time                      `json:"updated_at"`
+	ID         string              `json:"id"`
+	Name       string              `json:"name"`
+	UserID     string              `json:"user_id"`
+	User       UserResponse        `json:"user"`
+	Billboards []BillboardResponse `json:"billboards"`
+	Categories []CategoryResponse  `json:"categories"`
+	Sizes      []SizeResponse      `json:"sizes"`
+	Colors     []ColorResponse     `json:"colors"`
+	Products   []ProductResponse   `json:"products"`
+	Orders     []OrderResponse     `json:"orders"`
+	CreatedAt  time.Time           `json:"created_at"`
+	UpdatedAt  time.Time           `json:"updated_at"`
 }
 
 type StoreCreate struct {
-	ID         string      `json:"id" `
-	Name       string      `json:"name" `
-	UserID     string      `json:"user_id" `
-	User       User        `json:"user" `
-	Billboards []Billboard `json:"billboards"`
-	Categories []Category  `json:"categories"`
-	Sizes      []Size      `json:"sizes"`
-	Colors     []Color     `json:"colors"`
-	Products   []Product   `json:"products"`
-	Orders     []Order     `json:"orders"`
-	CreatedAt  time.Time   `json:"created_at" `
-	UpdatedAt  time.Time   `json:"updated_at" `
+	Name string `json:"name" `
 }
 
 type StoreUpdate struct {
-	Name       string      `json:"name" `
-	UserID     string      `json:"user_id" `
-	User       User        `json:"user" `
-	Billboards []Billboard `json:"billboards"`
-	Categories []Category  `json:"categories"`
-	Sizes      []Size      `json:"sizes"`
-	Colors     []Color     `json:"colors"`
-	Products   []Product   `json:"products"`
-	Orders     []Order     `json:"orders"`
-	CreatedAt  time.Time   `json:"created_at" `
-	UpdatedAt  time.Time   `json:"updated_at" `
+	Name string `json:"name" `
 }
 
 func ToStoreResponse(store Store) StoreResponse {
-	var billboards []BillboardResponseHiddenStore
+	var billboards []BillboardResponse
+	var categories []CategoryResponse
+	var sizes []SizeResponse
+	var colors []ColorResponse
+	var products []ProductResponse
+	var orders []OrderResponse
+	user := ToUserReponse(store.User)
+
 	for _, billboard := range store.Billboards {
-		billboards = append(billboards, ToBillboardResponseHiddenStore(billboard))
+		billboards = append(billboards, ToBillboardReponse(billboard))
+	}
+	for _, category := range store.Categories {
+		categories = append(categories, ToCategoryResponse(category))
+	}
+	for _, size := range store.Sizes {
+		sizes = append(sizes, ToSizeResponse(size))
+	}
+	for _, color := range store.Colors {
+		colors = append(colors, ToColorResponse(color))
+	}
+	for _, product := range store.Products {
+		products = append(products, ToProductResponse(product))
+	}
+	for _, order := range store.Orders {
+		orders = append(orders, ToOrderResponse(order))
 	}
 
 	return StoreResponse{
 		ID:         store.ID,
 		Name:       store.Name,
 		UserID:     store.UserID,
-		User:       store.User,
+		User:       user,
 		Billboards: billboards,
-		Categories: store.Categories,
-		Sizes:      store.Sizes,
-		Colors:     store.Colors,
-		Products:   store.Products,
-		Orders:     store.Orders,
+		Categories: categories,
+		Sizes:      sizes,
+		Colors:     colors,
+		Products:   products,
+		Orders:     orders,
 		CreatedAt:  store.CreatedAt,
 		UpdatedAt:  store.UpdatedAt,
 	}

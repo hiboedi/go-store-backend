@@ -7,7 +7,7 @@ type User struct {
 	Name      string    `json:"name" gorm:"not null;type:varchar(50)"`
 	Email     string    `json:"email" gorm:"not null;unique;type:varchar(100)"`
 	Password  string    `json:"password" gorm:"not null;type:varchar(100)"`
-	Phone     string    `json:"phone"`
+	Phone     int       `json:"phone"`
 	Stores    []Store   `json:"stores" `
 	CreatedAt time.Time `json:"created_at" gorm:"autoCreateTime"`
 	UpdatedAt time.Time `json:"updated_at" gorm:"autoUpdateTime"`
@@ -17,6 +17,7 @@ type UserResponse struct {
 	ID        string    `json:"id"`
 	Name      string    `json:"name"`
 	Email     string    `json:"email"`
+	Phone     int       `json:"phone"`
 	CreatedAt time.Time `json:"created_at"`
 	UpdatedAt time.Time `json:"updated_at"`
 }
@@ -52,6 +53,7 @@ func ToUserReponse(user User) UserResponse {
 		ID:        user.ID,
 		Name:      user.Name,
 		Email:     user.Email,
+		Phone:     user.Phone,
 		CreatedAt: user.CreatedAt,
 		UpdatedAt: user.UpdatedAt,
 	}

@@ -25,20 +25,9 @@ type ColorResponse struct {
 	UpdatedAt time.Time `json:"updated_at"`
 }
 
-type ColorResponseHiddenStore struct {
-	ID        string    `json:"id"`
-	StoreID   string    `json:"store_id"`
-	Name      string    `json:"name"`
-	Value     string    `json:"value"`
-	Products  []Product `json:"products"`
-	CreatedAt time.Time `json:"created_at"`
-	UpdatedAt time.Time `json:"updated_at"`
-}
-
 type ColorCreate struct {
-	StoreID string `json:"store_id"`
-	Name    string `json:"name" validate:"required"`
-	Value   string `json:"value" validate:"required"`
+	Name  string `json:"name" validate:"required"`
+	Value string `json:"value" validate:"required"`
 }
 
 type ColorUpdate struct {
@@ -57,32 +46,11 @@ func ToColorResponse(color Color) ColorResponse {
 	}
 }
 
-func ToColorResponseHiddenStore(color Color) ColorResponseHiddenStore {
-	return ColorResponseHiddenStore{
-		ID:        color.ID,
-		StoreID:   color.StoreID,
-		Name:      color.Name,
-		Value:     color.Value,
-		CreatedAt: color.CreatedAt,
-		UpdatedAt: color.UpdatedAt,
-	}
-}
-
 func ToColorResponses(colors []Color) []ColorResponse {
 	var responses []ColorResponse
 
 	for _, color := range colors {
 		responses = append(responses, ToColorResponse(color))
-	}
-
-	return responses
-}
-
-func ToColorResponsesHiddenStore(colors []Color) []ColorResponseHiddenStore {
-	var responses []ColorResponseHiddenStore
-
-	for _, color := range colors {
-		responses = append(responses, ToColorResponseHiddenStore(color))
 	}
 
 	return responses

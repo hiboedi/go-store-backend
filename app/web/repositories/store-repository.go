@@ -25,7 +25,7 @@ func NewStoreRepository() StoreRepository {
 
 func (r *StoreRepositoryImpl) CreateStore(ctx context.Context, db *gorm.DB, store models.Store) (models.Store, error) {
 
-	err := db.WithContext(ctx).Preload("User").Create(&store).Error
+	err := db.WithContext(ctx).Create(&store).Error
 	helpers.PanicIfError(err)
 
 	return store, nil
@@ -42,7 +42,9 @@ func (r *StoreRepositoryImpl) UpdateStore(ctx context.Context, db *gorm.DB, stor
 
 func (r *StoreRepositoryImpl) GetStoreById(ctx context.Context, db *gorm.DB, storeId string) (models.Store, error) {
 	var store models.Store
-	err := db.WithContext(ctx).Model(&models.Store{}).Preload("User", func(db *gorm.DB) *gorm.DB {
+	err := db.WithContext(ctx).Model(&models.Store{}).Preload("Colors").Preload("Orders").Preload("Products", func(db *gorm.DB) *gorm.DB {
+		return db.Preload("Images")
+	}).Preload("Sizes").Preload("Categories").Preload("Billboards").Preload("User", func(db *gorm.DB) *gorm.DB {
 		return db.Omit("password")
 	}).Where("id = ?", storeId).Take(&store).Error
 	helpers.PanicIfError(err)
@@ -61,7 +63,9 @@ func (r *StoreRepositoryImpl) DeleteStore(ctx context.Context, db *gorm.DB, stor
 func (r *StoreRepositoryImpl) FindAllStore(ctx context.Context, db *gorm.DB, userId string) ([]models.Store, error) {
 	var stores []models.Store
 
-	err := db.WithContext(ctx).Model(&models.Store{}).Where("user_id = ?", userId).Preload("Billboards").Preload("User", func(db *gorm.DB) *gorm.DB {
+	err := db.WithContext(ctx).Model(&models.Store{}).Where("user_id = ?", userId).Preload("Colors").Preload("Orders").Preload("Products", func(db *gorm.DB) *gorm.DB {
+		return db.Preload("Images")
+	}).Preload("Sizes").Preload("Categories").Preload("Billboards").Preload("User", func(db *gorm.DB) *gorm.DB {
 		return db.Omit("password")
 	}).Find(&stores).Error
 	helpers.PanicIfError(err)

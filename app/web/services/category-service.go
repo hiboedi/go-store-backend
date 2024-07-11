@@ -19,7 +19,7 @@ type CategoryServiceImpl struct {
 }
 
 type CategoryService interface {
-	Create(ctx context.Context, request models.CategoryCreate) models.CategoryResponse
+	Create(ctx context.Context, request models.CategoryCreate, storeId string) models.CategoryResponse
 	Update(ctx context.Context, request models.CategoryUpdate, categoryId string) models.CategoryResponse
 	Delete(ctx context.Context, categoryId string)
 	FindById(ctx context.Context, categoryId string) models.CategoryResponse
@@ -34,7 +34,7 @@ func NewCategoryService(categoryRepo repositories.CategoryRepository, db *gorm.D
 	}
 }
 
-func (s *CategoryServiceImpl) Create(ctx context.Context, request models.CategoryCreate) models.CategoryResponse {
+func (s *CategoryServiceImpl) Create(ctx context.Context, request models.CategoryCreate, storeId string) models.CategoryResponse {
 	err := s.Validate.Struct(request)
 	helpers.PanicIfError(err)
 
@@ -43,7 +43,7 @@ func (s *CategoryServiceImpl) Create(ctx context.Context, request models.Categor
 
 	category := models.Category{
 		ID:          uuid.New().String(),
-		StoreID:     request.StoreID,
+		StoreID:     storeId,
 		BillboardID: request.BillboardID,
 		Name:        request.Name,
 	}

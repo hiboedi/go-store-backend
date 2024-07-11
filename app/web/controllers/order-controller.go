@@ -22,6 +22,17 @@ func NewOrderController(orderService services.OrderService) OrderController {
 	}
 }
 
+// FindAll Order godoc
+// @Summary FindAll Order from the store
+// @Description FindAll Order from the store
+// @Tags Order
+// @Accept json
+// @Produce json
+// @Param storeId path string true "Store ID"
+// @Success 200 {object} web.WebResponse{data=models.OrderResponse}
+// @Failure 401 {object} web.WebResponse
+// @Router /api/{storeId}/orders [get]
+// @Security BearerAuth
 func (c *OrderControllerImpl) FindAllOrder(w http.ResponseWriter, r *http.Request) {
 
 	data, err := c.OrderService.FindAllOrder(r.Context())

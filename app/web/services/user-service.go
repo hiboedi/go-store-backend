@@ -2,6 +2,7 @@ package services
 
 import (
 	"context"
+	"strconv"
 
 	"github.com/go-playground/validator/v10"
 	"github.com/google/uuid"
@@ -42,25 +43,26 @@ func (s *UserServiceimpl) Create(ctx context.Context, request models.UserCreate)
 	defer helpers.CommitOrRollback(tx)
 
 	hashPassword, _ := helpers.MakePassword(request.Password)
+	phoneNumber, _ := strconv.Atoi(request.Phone)
 
 	user := models.User{
 		ID:       uuid.New().String(),
 		Name:     request.Name,
 		Email:    request.Email,
 		Password: hashPassword,
-		Phone:    request.Phone,
+		Phone:    phoneNumber,
 	}
 
 	data, err := s.UserRepo.Create(ctx, tx, user)
 	helpers.PanicIfError(err)
 
-	cart := models.Cart{
-		ID:     uuid.New().String(),
-		UserID: user.ID,
-	}
+	// cart := models.Cart{
+	// 	ID:     uuid.New().String(),
+	// 	UserID: user.ID,
+	// }
 
-	_, err = s.CartRepo.CreateCart(ctx, tx, cart)
-	helpers.PanicIfError(err)
+	// _, err = s.CartRepo.CreateCart(ctx, tx, cart)
+	// helpers.PanicIfError(err)
 
 	return models.ToUserReponse(data)
 }

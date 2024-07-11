@@ -31,9 +31,7 @@ type Product struct {
 type ProductResponse struct {
 	ID                 string     `json:"id"`
 	StoreID            string     `json:"store_id"`
-	Store              Store      `json:"store"`
 	CategoryID         string     `json:"category_id"`
-	Category           Category   `json:"category"`
 	Name               string     `json:"name"`
 	Stock              int64      `json:"stock"`
 	Price              float64    `json:"price"`
@@ -42,83 +40,44 @@ type ProductResponse struct {
 	IsFeatured         bool       `json:"is_featured"`
 	IsArchived         bool       `json:"is_archived"`
 	SizeID             string     `json:"size_id"`
-	Size               Size       `json:"size"`
 	ColorID            string     `json:"color_id"`
-	Color              Color      `json:"color"`
 	Images             []Image    `json:"images"`
 	CartItems          []CartItem `json:"cart_items"`
 	CreatedAt          time.Time  `json:"created_at"`
 	UpdatedAt          time.Time  `json:"updated_at"`
 }
 
-type ProductResponseHiddenStore struct {
-	ID                 string    `json:"id"`
-	StoreID            string    `json:"store_id"`
-	CategoryID         string    `json:"category_id"`
-	Name               string    `json:"name"`
-	Stock              int64     `json:"stock"`
-	Price              float64   `json:"price"`
-	PriceAfterDiscount float64   `json:"price_discount"`
-	DiscountPercent    uint32    `json:"discount_percent"`
-	IsFeatured         bool      `json:"is_featured"`
-	IsArchived         bool      `json:"is_archived"`
-	SizeID             string    `json:"size_id"`
-	ColorID            string    `json:"color_id"`
-	Images             []Image   `json:"images"`
-	CreatedAt          time.Time `json:"created_at"`
-	UpdatedAt          time.Time `json:"updated_at"`
-}
-
 type ProductCreate struct {
-	ID              string     `json:"id"`
-	StoreID         string     `json:"store_id"`
-	Store           Store      `json:"store"`
-	CategoryID      string     `json:"category_id"`
-	Category        Category   `json:"category"`
-	Name            string     `json:"name"`
-	Price           float64    `json:"price"`
-	Stock           int64      `json:"stock"`
-	DiscountPercent uint32     `json:"discount_percent"`
-	IsFeatured      bool       `json:"is_featured"`
-	IsArchived      bool       `json:"is_archived"`
-	SizeID          string     `json:"size_id"`
-	Size            Size       `json:"size"`
-	ColorID         string     `json:"color_id"`
-	Color           Color      `json:"color"`
-	Images          []Image    `json:"images"`
-	CartItems       []CartItem `json:"cart_items"`
-	CreatedAt       time.Time  `json:"created_at"`
-	UpdatedAt       time.Time  `json:"updated_at"`
+	CategoryID      string  `json:"category_id"`
+	Name            string  `json:"name"`
+	Price           float64 `json:"price"`
+	Stock           int64   `json:"stock"`
+	DiscountPercent uint32  `json:"discount_percent"`
+	IsFeatured      bool    `json:"is_featured"`
+	IsArchived      bool    `json:"is_archived"`
+	SizeID          string  `json:"size_id"`
+	ColorID         string  `json:"color_id"`
+	Images          []Image `json:"images"`
 }
 
 type ProductUpdate struct {
-	StoreID         string     `json:"store_id"`
-	Store           Store      `json:"store"`
-	CategoryID      string     `json:"category_id"`
-	Category        Category   `json:"category"`
-	Name            string     `json:"name"`
-	Price           float64    `json:"price"`
-	Stock           int64      `json:"stock"`
-	DiscountPercent uint32     `json:"discount_percent"`
-	IsFeatured      bool       `json:"is_featured"`
-	IsArchived      bool       `json:"is_archived"`
-	SizeID          string     `json:"size_id"`
-	Size            Size       `json:"size"`
-	ColorID         string     `json:"color_id"`
-	Color           Color      `json:"color"`
-	Images          []Image    `json:"images" gorm:"constraint:OnDelete:CASCADE;"`
-	CartItems       []CartItem `json:"cart_items"`
-	CreatedAt       time.Time  `json:"created_at"`
-	UpdatedAt       time.Time  `json:"updated_at"`
+	CategoryID      string  `json:"category_id"`
+	Name            string  `json:"name"`
+	Price           float64 `json:"price"`
+	Stock           int64   `json:"stock"`
+	DiscountPercent uint32  `json:"discount_percent"`
+	IsFeatured      bool    `json:"is_featured"`
+	IsArchived      bool    `json:"is_archived"`
+	SizeID          string  `json:"size_id"`
+	ColorID         string  `json:"color_id"`
+	Images          []Image `json:"images"`
 }
 
 func ToProductResponse(product Product) ProductResponse {
 	return ProductResponse{
 		ID:                 product.ID,
 		StoreID:            product.StoreID,
-		Store:              product.Store,
 		CategoryID:         product.CategoryID,
-		Category:           product.Category,
 		Name:               product.Name,
 		Price:              product.Price,
 		PriceAfterDiscount: product.PriceAfterDiscount,
@@ -127,43 +86,12 @@ func ToProductResponse(product Product) ProductResponse {
 		IsFeatured:         product.IsFeatured,
 		IsArchived:         product.IsArchived,
 		SizeID:             product.SizeID,
-		Size:               product.Size,
 		ColorID:            product.ColorID,
-		Color:              product.Color,
 		Images:             product.Images,
 		CartItems:          product.CartItems,
 		CreatedAt:          product.CreatedAt,
 		UpdatedAt:          product.UpdatedAt,
 	}
-}
-
-func ToProductResponseHiddenStore(product Product) ProductResponseHiddenStore {
-	return ProductResponseHiddenStore{
-		ID:                 product.ID,
-		StoreID:            product.StoreID,
-		CategoryID:         product.CategoryID,
-		Name:               product.Name,
-		Price:              product.Price,
-		PriceAfterDiscount: product.PriceAfterDiscount,
-		DiscountPercent:    product.DiscountPercent,
-		IsFeatured:         product.IsFeatured,
-		IsArchived:         product.IsArchived,
-		SizeID:             product.SizeID,
-		Stock:              product.Stock,
-		ColorID:            product.ColorID,
-		Images:             product.Images,
-		CreatedAt:          product.CreatedAt,
-		UpdatedAt:          product.UpdatedAt,
-	}
-}
-
-func ToProductResponsesHiddenStore(products []Product) []ProductResponseHiddenStore {
-	var responses []ProductResponseHiddenStore
-
-	for _, product := range products {
-		responses = append(responses, ToProductResponseHiddenStore(product))
-	}
-	return responses
 }
 
 func ToProductResponses(products []Product, pagination Pagination) ProductPagination {

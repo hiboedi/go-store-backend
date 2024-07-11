@@ -1,5 +1,621 @@
 basePath: /
 definitions:
+  models.Billboard:
+    properties:
+      categories:
+        items:
+          $ref: '#/definitions/models.Category'
+        type: array
+      created_at:
+        type: string
+      id:
+        type: string
+      image_url:
+        type: string
+      label:
+        type: string
+      store_id:
+        type: string
+      updated_at:
+        type: string
+    type: object
+  models.BillboardCreate:
+    properties:
+      image_url:
+        type: string
+      label:
+        maxLength: 50
+        minLength: 4
+        type: string
+    required:
+    - image_url
+    - label
+    type: object
+  models.BillboardResponse:
+    properties:
+      categories:
+        items:
+          $ref: '#/definitions/models.Category'
+        type: array
+      created_at:
+        type: string
+      id:
+        type: string
+      image_url:
+        type: string
+      label:
+        type: string
+      store_id:
+        type: string
+      updated_at:
+        type: string
+    type: object
+  models.BillboardUpdate:
+    properties:
+      image_url:
+        type: string
+      label:
+        type: string
+    type: object
+  models.Cart:
+    properties:
+      cart_items:
+        items:
+          $ref: '#/definitions/models.CartItem'
+        type: array
+      created_at:
+        type: string
+      id:
+        type: string
+      order_id:
+        type: string
+      updated_at:
+        type: string
+      user:
+        $ref: '#/definitions/models.User'
+      user_id:
+        type: string
+    type: object
+  models.CartItem:
+    properties:
+      base_price:
+        type: number
+      cart:
+        $ref: '#/definitions/models.Cart'
+      cart_id:
+        type: string
+      created_at:
+        type: string
+      discount_amount:
+        type: number
+      discount_percent:
+        type: integer
+      id:
+        type: string
+      product:
+        $ref: '#/definitions/models.Product'
+      product_id:
+        type: string
+      quantity:
+        type: integer
+      tax_amount:
+        type: number
+      tax_percent:
+        type: integer
+      total_price:
+        type: number
+      updated_at:
+        type: string
+    type: object
+  models.Category:
+    properties:
+      billboard:
+        $ref: '#/definitions/models.Billboard'
+      billboard_id:
+        type: string
+      created_at:
+        type: string
+      id:
+        type: string
+      name:
+        type: string
+      products:
+        items:
+          $ref: '#/definitions/models.Product'
+        type: array
+      store_id:
+        type: string
+      updated_at:
+        type: string
+    type: object
+  models.CategoryCreate:
+    properties:
+      billboard_id:
+        type: string
+      name:
+        maxLength: 50
+        minLength: 4
+        type: string
+    required:
+    - billboard_id
+    - name
+    type: object
+  models.CategoryResponse:
+    properties:
+      billboard_id:
+        type: string
+      created_at:
+        type: string
+      id:
+        type: string
+      name:
+        type: string
+      products:
+        items:
+          $ref: '#/definitions/models.Product'
+        type: array
+      store_id:
+        type: string
+      updated_at:
+        type: string
+    type: object
+  models.CategoryUpdate:
+    properties:
+      billboard_id:
+        type: string
+      name:
+        maxLength: 50
+        minLength: 4
+        type: string
+    required:
+    - billboard_id
+    - name
+    type: object
+  models.Color:
+    properties:
+      created_at:
+        type: string
+      id:
+        type: string
+      name:
+        type: string
+      products:
+        items:
+          $ref: '#/definitions/models.Product'
+        type: array
+      store_id:
+        type: string
+      updated_at:
+        type: string
+      value:
+        type: string
+    type: object
+  models.ColorCreate:
+    properties:
+      name:
+        type: string
+      value:
+        type: string
+    required:
+    - name
+    - value
+    type: object
+  models.ColorResponse:
+    properties:
+      created_at:
+        type: string
+      id:
+        type: string
+      name:
+        type: string
+      products:
+        items:
+          $ref: '#/definitions/models.Product'
+        type: array
+      store_id:
+        type: string
+      updated_at:
+        type: string
+      value:
+        type: string
+    type: object
+  models.ColorUpdate:
+    properties:
+      name:
+        type: string
+      value:
+        type: string
+    required:
+    - name
+    - value
+    type: object
+  models.Image:
+    properties:
+      created_at:
+        type: string
+      id:
+        type: string
+      product_id:
+        type: string
+      updated_at:
+        type: string
+      url:
+        type: string
+    type: object
+  models.Order:
+    properties:
+      address:
+        type: string
+      created_at:
+        type: string
+      customer_name:
+        type: string
+      id:
+        type: string
+      is_paid:
+        type: boolean
+      order_items:
+        items:
+          $ref: '#/definitions/models.OrderItem'
+        type: array
+      phone:
+        type: integer
+      store:
+        $ref: '#/definitions/models.Store'
+      store_id:
+        type: string
+      total_price:
+        type: number
+      updated_at:
+        type: string
+      user_id:
+        type: string
+    type: object
+  models.OrderItem:
+    properties:
+      created_at:
+        type: string
+      id:
+        type: string
+      order:
+        $ref: '#/definitions/models.Order'
+      order_id:
+        type: string
+      product:
+        $ref: '#/definitions/models.Product'
+      product_id:
+        type: string
+      quantity:
+        type: integer
+      updated_at:
+        type: string
+    type: object
+  models.OrderResponse:
+    properties:
+      address:
+        type: string
+      base_total_price:
+        type: number
+      created_at:
+        type: string
+      customer_name:
+        type: string
+      id:
+        type: string
+      is_paid:
+        type: boolean
+      order_items:
+        items:
+          $ref: '#/definitions/models.OrderItem'
+        type: array
+      phone:
+        type: integer
+      store_id:
+        type: string
+      updated_at:
+        type: string
+      user_id:
+        type: string
+    type: object
+  models.Product:
+    properties:
+      cart_items:
+        items:
+          $ref: '#/definitions/models.CartItem'
+        type: array
+      category:
+        $ref: '#/definitions/models.Category'
+      category_id:
+        type: string
+      color:
+        $ref: '#/definitions/models.Color'
+      color_id:
+        type: string
+      created_at:
+        type: string
+      discount_percent:
+        type: integer
+      id:
+        type: string
+      images:
+        items:
+          $ref: '#/definitions/models.Image'
+        type: array
+      is_archived:
+        type: boolean
+      is_featured:
+        type: boolean
+      name:
+        type: string
+      order_items:
+        items:
+          $ref: '#/definitions/models.OrderItem'
+        type: array
+      price:
+        type: number
+      price_discount:
+        type: number
+      size:
+        $ref: '#/definitions/models.Size'
+      size_id:
+        type: string
+      stock:
+        type: integer
+      store_id:
+        type: string
+      updated_at:
+        type: string
+    type: object
+  models.ProductCreate:
+    properties:
+      category_id:
+        type: string
+      color_id:
+        type: string
+      discount_percent:
+        type: integer
+      images:
+        items:
+          $ref: '#/definitions/models.Image'
+        type: array
+      is_archived:
+        type: boolean
+      is_featured:
+        type: boolean
+      name:
+        type: string
+      price:
+        type: number
+      size_id:
+        type: string
+      stock:
+        type: integer
+    type: object
+  models.ProductResponse:
+    properties:
+      cart_items:
+        items:
+          $ref: '#/definitions/models.CartItem'
+        type: array
+      category_id:
+        type: string
+      color_id:
+        type: string
+      created_at:
+        type: string
+      discount_percent:
+        type: integer
+      id:
+        type: string
+      images:
+        items:
+          $ref: '#/definitions/models.Image'
+        type: array
+      is_archived:
+        type: boolean
+      is_featured:
+        type: boolean
+      name:
+        type: string
+      price:
+        type: number
+      price_discount:
+        type: number
+      size_id:
+        type: string
+      stock:
+        type: integer
+      store_id:
+        type: string
+      updated_at:
+        type: string
+    type: object
+  models.ProductUpdate:
+    properties:
+      category_id:
+        type: string
+      color_id:
+        type: string
+      discount_percent:
+        type: integer
+      images:
+        items:
+          $ref: '#/definitions/models.Image'
+        type: array
+      is_archived:
+        type: boolean
+      is_featured:
+        type: boolean
+      name:
+        type: string
+      price:
+        type: number
+      size_id:
+        type: string
+      stock:
+        type: integer
+    type: object
+  models.Size:
+    properties:
+      created_at:
+        type: string
+      id:
+        type: string
+      name:
+        type: string
+      products:
+        items:
+          $ref: '#/definitions/models.Product'
+        type: array
+      store_id:
+        type: string
+      updated_at:
+        type: string
+      value:
+        type: string
+    type: object
+  models.SizeCreate:
+    properties:
+      name:
+        type: string
+      value:
+        type: string
+    type: object
+  models.SizeResponse:
+    properties:
+      created_at:
+        type: string
+      id:
+        type: string
+      name:
+        type: string
+      products:
+        items:
+          $ref: '#/definitions/models.Product'
+        type: array
+      store_id:
+        type: string
+      updated_at:
+        type: string
+      value:
+        type: string
+    type: object
+  models.SizeUpdate:
+    properties:
+      name:
+        type: string
+      value:
+        type: string
+    type: object
+  models.Store:
+    properties:
+      billboards:
+        items:
+          $ref: '#/definitions/models.Billboard'
+        type: array
+      categories:
+        items:
+          $ref: '#/definitions/models.Category'
+        type: array
+      colors:
+        items:
+          $ref: '#/definitions/models.Color'
+        type: array
+      created_at:
+        type: string
+      id:
+        type: string
+      name:
+        type: string
+      orders:
+        items:
+          $ref: '#/definitions/models.Order'
+        type: array
+      products:
+        items:
+          $ref: '#/definitions/models.Product'
+        type: array
+      sizes:
+        items:
+          $ref: '#/definitions/models.Size'
+        type: array
+      updated_at:
+        type: string
+      user:
+        $ref: '#/definitions/models.User'
+      user_id:
+        type: string
+    type: object
+  models.StoreCreate:
+    properties:
+      name:
+        type: string
+    type: object
+  models.StoreResponse:
+    properties:
+      billboards:
+        items:
+          $ref: '#/definitions/models.BillboardResponse'
+        type: array
+      categories:
+        items:
+          $ref: '#/definitions/models.CategoryResponse'
+        type: array
+      colors:
+        items:
+          $ref: '#/definitions/models.ColorResponse'
+        type: array
+      created_at:
+        type: string
+      id:
+        type: string
+      name:
+        type: string
+      orders:
+        items:
+          $ref: '#/definitions/models.OrderResponse'
+        type: array
+      products:
+        items:
+          $ref: '#/definitions/models.ProductResponse'
+        type: array
+      sizes:
+        items:
+          $ref: '#/definitions/models.SizeResponse'
+        type: array
+      updated_at:
+        type: string
+      user:
+        $ref: '#/definitions/models.UserResponse'
+      user_id:
+        type: string
+    type: object
+  models.StoreUpdate:
+    properties:
+      name:
+        type: string
+    type: object
+  models.User:
+    properties:
+      created_at:
+        type: string
+      email:
+        type: string
+      id:
+        type: string
+      name:
+        type: string
+      password:
+        type: string
+      phone:
+        type: integer
+      stores:
+        items:
+          $ref: '#/definitions/models.Store'
+        type: array
+      updated_at:
+        type: string
+    type: object
   models.UserCreate:
     properties:
       email:
@@ -42,6 +658,8 @@ definitions:
         type: string
       name:
         type: string
+      phone:
+        type: integer
       updated_at:
         type: string
     type: object
@@ -59,14 +677,1090 @@ info:
     email: hi.boedi8@gmail.com
     name: hi.boedi8@gmail.com
     url: https://www.github.com/hiboedi
-  description: Sample of GoStore Documentation.
   license:
     name: Apache 2.0
     url: http://www.apache.org/licenses/LICENSE-2.0.html
-  termsOfService: https://www.github.com/hiboedi
-  title: GoStore API
-  version: "1.0"
 paths:
+  /api:
+    get:
+      consumes:
+      - application/json
+      description: Get all stores for the authenticated user
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/web.WebResponse'
+            - properties:
+                data:
+                  $ref: '#/definitions/models.StoreResponse'
+              type: object
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/web.WebResponse'
+      security:
+      - BearerAuth: []
+      summary: Get all stores for the user
+      tags:
+      - Store
+    post:
+      consumes:
+      - application/json
+      description: Create store for the authenticated user
+      parameters:
+      - description: Store create
+        in: body
+        name: store
+        required: true
+        schema:
+          $ref: '#/definitions/models.StoreCreate'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/web.WebResponse'
+            - properties:
+                data:
+                  $ref: '#/definitions/models.StoreResponse'
+              type: object
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/web.WebResponse'
+      security:
+      - BearerAuth: []
+      summary: Create store for the user
+      tags:
+      - Store
+  /api/{storeId}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete store for the authenticated user
+      parameters:
+      - description: Store ID
+        in: path
+        name: storeId
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/web.WebResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/web.WebResponse'
+      security:
+      - BearerAuth: []
+      summary: Delete store for the user
+      tags:
+      - Store
+    get:
+      consumes:
+      - application/json
+      description: FindById store for the authenticated user
+      parameters:
+      - description: Store ID
+        in: path
+        name: storeId
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/web.WebResponse'
+            - properties:
+                data:
+                  $ref: '#/definitions/models.StoreResponse'
+              type: object
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/web.WebResponse'
+      security:
+      - BearerAuth: []
+      summary: FindById store for the user
+      tags:
+      - Store
+    put:
+      consumes:
+      - application/json
+      description: Update store for the authenticated user
+      parameters:
+      - description: Store update
+        in: body
+        name: store
+        required: true
+        schema:
+          $ref: '#/definitions/models.StoreUpdate'
+      - description: Store ID
+        in: path
+        name: storeId
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/web.WebResponse'
+            - properties:
+                data:
+                  $ref: '#/definitions/models.StoreResponse'
+              type: object
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/web.WebResponse'
+      security:
+      - BearerAuth: []
+      summary: Update store for the user
+      tags:
+      - Store
+  /api/{storeId}/billboards:
+    get:
+      consumes:
+      - application/json
+      description: Get all billboards for the store
+      parameters:
+      - description: Store ID
+        in: path
+        name: storeId
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/web.WebResponse'
+            - properties:
+                data:
+                  $ref: '#/definitions/models.BillboardResponse'
+              type: object
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/web.WebResponse'
+      security:
+      - BearerAuth: []
+      summary: Get all billboards for the store
+      tags:
+      - Billboard
+    post:
+      consumes:
+      - application/json
+      description: create billboard for the store
+      parameters:
+      - description: billboard create
+        in: body
+        name: billboard
+        required: true
+        schema:
+          $ref: '#/definitions/models.BillboardCreate'
+      - description: Store ID
+        in: path
+        name: storeId
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/web.WebResponse'
+            - properties:
+                data:
+                  $ref: '#/definitions/models.BillboardResponse'
+              type: object
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/web.WebResponse'
+      security:
+      - BearerAuth: []
+      summary: create billboard for the store
+      tags:
+      - Billboard
+  /api/{storeId}/billboards/{billboardId}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete billboard from the store
+      parameters:
+      - description: Store ID
+        in: path
+        name: storeId
+        required: true
+        type: string
+      - description: BIllboard ID
+        in: path
+        name: billboardId
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/web.WebResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/web.WebResponse'
+      security:
+      - BearerAuth: []
+      summary: Delete billboard from the store
+      tags:
+      - Billboard
+    get:
+      consumes:
+      - application/json
+      description: FindById billboard from the store
+      parameters:
+      - description: Store ID
+        in: path
+        name: storeId
+        required: true
+        type: string
+      - description: BIllboard ID
+        in: path
+        name: billboardId
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/web.WebResponse'
+            - properties:
+                data:
+                  $ref: '#/definitions/models.BillboardResponse'
+              type: object
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/web.WebResponse'
+      security:
+      - BearerAuth: []
+      summary: FindById billboard from the store
+      tags:
+      - Billboard
+    put:
+      consumes:
+      - application/json
+      description: Update billboard for the store
+      parameters:
+      - description: billboad Update
+        in: body
+        name: billboard
+        required: true
+        schema:
+          $ref: '#/definitions/models.BillboardUpdate'
+      - description: Store ID
+        in: path
+        name: storeId
+        required: true
+        type: string
+      - description: BIllboard ID
+        in: path
+        name: billboardId
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/web.WebResponse'
+            - properties:
+                data:
+                  $ref: '#/definitions/models.BillboardResponse'
+              type: object
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/web.WebResponse'
+      security:
+      - BearerAuth: []
+      summary: Update billboard for the store
+      tags:
+      - Billboard
+  /api/{storeId}/categories:
+    get:
+      consumes:
+      - application/json
+      description: FindAll Categories from the store
+      parameters:
+      - description: Store ID
+        in: path
+        name: storeId
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/web.WebResponse'
+            - properties:
+                data:
+                  $ref: '#/definitions/models.CategoryResponse'
+              type: object
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/web.WebResponse'
+      security:
+      - BearerAuth: []
+      summary: FindAll Categories from the store
+      tags:
+      - Category
+    post:
+      consumes:
+      - application/json
+      description: create Category for the store
+      parameters:
+      - description: Category create
+        in: body
+        name: category
+        required: true
+        schema:
+          $ref: '#/definitions/models.CategoryCreate'
+      - description: Store ID
+        in: path
+        name: storeId
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/web.WebResponse'
+            - properties:
+                data:
+                  $ref: '#/definitions/models.CategoryResponse'
+              type: object
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/web.WebResponse'
+      security:
+      - BearerAuth: []
+      summary: create Category for the store
+      tags:
+      - Category
+  /api/{storeId}/categories/{categoryId}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete Category from the store
+      parameters:
+      - description: Store ID
+        in: path
+        name: storeId
+        required: true
+        type: string
+      - description: Category ID
+        in: path
+        name: categoryId
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/web.WebResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/web.WebResponse'
+      security:
+      - BearerAuth: []
+      summary: Delete Category from the store
+      tags:
+      - Category
+    get:
+      consumes:
+      - application/json
+      description: FindById Category from the store
+      parameters:
+      - description: Store ID
+        in: path
+        name: storeId
+        required: true
+        type: string
+      - description: Category ID
+        in: path
+        name: categoryId
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/web.WebResponse'
+            - properties:
+                data:
+                  $ref: '#/definitions/models.CategoryResponse'
+              type: object
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/web.WebResponse'
+      security:
+      - BearerAuth: []
+      summary: FindById Category from the store
+      tags:
+      - Category
+    put:
+      consumes:
+      - application/json
+      description: Update Category for the store
+      parameters:
+      - description: Category Update
+        in: body
+        name: category
+        required: true
+        schema:
+          $ref: '#/definitions/models.CategoryUpdate'
+      - description: Store ID
+        in: path
+        name: storeId
+        required: true
+        type: string
+      - description: Category ID
+        in: path
+        name: categoryId
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/web.WebResponse'
+            - properties:
+                data:
+                  $ref: '#/definitions/models.CategoryResponse'
+              type: object
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/web.WebResponse'
+      security:
+      - BearerAuth: []
+      summary: Update Category for the store
+      tags:
+      - Category
+  /api/{storeId}/colors:
+    get:
+      consumes:
+      - application/json
+      description: FindAll Color from the store
+      parameters:
+      - description: Store ID
+        in: path
+        name: storeId
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/web.WebResponse'
+            - properties:
+                data:
+                  $ref: '#/definitions/models.ColorResponse'
+              type: object
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/web.WebResponse'
+      security:
+      - BearerAuth: []
+      summary: FindAll Color from the store
+      tags:
+      - Color
+    post:
+      consumes:
+      - application/json
+      description: create Color for the store
+      parameters:
+      - description: Color create
+        in: body
+        name: Color
+        required: true
+        schema:
+          $ref: '#/definitions/models.ColorCreate'
+      - description: Store ID
+        in: path
+        name: storeId
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/web.WebResponse'
+            - properties:
+                data:
+                  $ref: '#/definitions/models.ColorResponse'
+              type: object
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/web.WebResponse'
+      security:
+      - BearerAuth: []
+      summary: create Color for the store
+      tags:
+      - Color
+  /api/{storeId}/colors/{colorId}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete Color from the store
+      parameters:
+      - description: Store ID
+        in: path
+        name: storeId
+        required: true
+        type: string
+      - description: Color ID
+        in: path
+        name: colorId
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/web.WebResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/web.WebResponse'
+      security:
+      - BearerAuth: []
+      summary: Delete Color from the store
+      tags:
+      - Color
+    get:
+      consumes:
+      - application/json
+      description: FindById Color from the store
+      parameters:
+      - description: Store ID
+        in: path
+        name: storeId
+        required: true
+        type: string
+      - description: Color ID
+        in: path
+        name: colorId
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/web.WebResponse'
+            - properties:
+                data:
+                  $ref: '#/definitions/models.ColorResponse'
+              type: object
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/web.WebResponse'
+      security:
+      - BearerAuth: []
+      summary: FindById Color from the store
+      tags:
+      - Color
+    put:
+      consumes:
+      - application/json
+      description: Update Color from the store
+      parameters:
+      - description: Color Update
+        in: body
+        name: Color
+        required: true
+        schema:
+          $ref: '#/definitions/models.ColorUpdate'
+      - description: Store ID
+        in: path
+        name: storeId
+        required: true
+        type: string
+      - description: Color ID
+        in: path
+        name: colorId
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/web.WebResponse'
+            - properties:
+                data:
+                  $ref: '#/definitions/models.ColorResponse'
+              type: object
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/web.WebResponse'
+      security:
+      - BearerAuth: []
+      summary: Update Color from the store
+      tags:
+      - Color
+  /api/{storeId}/orders:
+    get:
+      consumes:
+      - application/json
+      description: FindAll Order from the store
+      parameters:
+      - description: Store ID
+        in: path
+        name: storeId
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/web.WebResponse'
+            - properties:
+                data:
+                  $ref: '#/definitions/models.OrderResponse'
+              type: object
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/web.WebResponse'
+      security:
+      - BearerAuth: []
+      summary: FindAll Order from the store
+      tags:
+      - Order
+  /api/{storeId}/products:
+    get:
+      consumes:
+      - application/json
+      description: FindAll Products from the store
+      parameters:
+      - description: Store ID
+        in: path
+        name: storeId
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/web.WebResponse'
+            - properties:
+                data:
+                  $ref: '#/definitions/models.ProductResponse'
+              type: object
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/web.WebResponse'
+      security:
+      - BearerAuth: []
+      summary: FindAll Products from the store
+      tags:
+      - Product
+    post:
+      consumes:
+      - application/json
+      description: create Product for the store
+      parameters:
+      - description: Product create
+        in: body
+        name: Product
+        required: true
+        schema:
+          $ref: '#/definitions/models.ProductCreate'
+      - description: Store ID
+        in: path
+        name: storeId
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/web.WebResponse'
+            - properties:
+                data:
+                  $ref: '#/definitions/models.ProductResponse'
+              type: object
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/web.WebResponse'
+      security:
+      - BearerAuth: []
+      summary: create Product for the store
+      tags:
+      - Product
+  /api/{storeId}/products/{productId}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete Product from the store
+      parameters:
+      - description: Store ID
+        in: path
+        name: storeId
+        required: true
+        type: string
+      - description: Product ID
+        in: path
+        name: productId
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/web.WebResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/web.WebResponse'
+      security:
+      - BearerAuth: []
+      summary: Delete Product from the store
+      tags:
+      - Product
+    get:
+      consumes:
+      - application/json
+      description: FindById Product from the store
+      parameters:
+      - description: Store ID
+        in: path
+        name: storeId
+        required: true
+        type: string
+      - description: Product ID
+        in: path
+        name: productId
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/web.WebResponse'
+            - properties:
+                data:
+                  $ref: '#/definitions/models.ProductResponse'
+              type: object
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/web.WebResponse'
+      security:
+      - BearerAuth: []
+      summary: FindById Product from the store
+      tags:
+      - Product
+    put:
+      consumes:
+      - application/json
+      description: Update Product from the store
+      parameters:
+      - description: Product Update
+        in: body
+        name: Product
+        required: true
+        schema:
+          $ref: '#/definitions/models.ProductUpdate'
+      - description: Store ID
+        in: path
+        name: storeId
+        required: true
+        type: string
+      - description: Product ID
+        in: path
+        name: productId
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/web.WebResponse'
+            - properties:
+                data:
+                  $ref: '#/definitions/models.ProductResponse'
+              type: object
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/web.WebResponse'
+      security:
+      - BearerAuth: []
+      summary: Update Product from the store
+      tags:
+      - Product
+  /api/{storeId}/sizes:
+    get:
+      consumes:
+      - application/json
+      description: FindAll Size from the store
+      parameters:
+      - description: Store ID
+        in: path
+        name: storeId
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/web.WebResponse'
+            - properties:
+                data:
+                  $ref: '#/definitions/models.SizeResponse'
+              type: object
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/web.WebResponse'
+      security:
+      - BearerAuth: []
+      summary: FindAll Size from the store
+      tags:
+      - Size
+    post:
+      consumes:
+      - application/json
+      description: create Size for the store
+      parameters:
+      - description: Size create
+        in: body
+        name: Size
+        required: true
+        schema:
+          $ref: '#/definitions/models.SizeCreate'
+      - description: Store ID
+        in: path
+        name: storeId
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/web.WebResponse'
+            - properties:
+                data:
+                  $ref: '#/definitions/models.SizeResponse'
+              type: object
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/web.WebResponse'
+      security:
+      - BearerAuth: []
+      summary: create Size for the store
+      tags:
+      - Size
+  /api/{storeId}/sizes/{sizeId}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete Size from the store
+      parameters:
+      - description: Size ID
+        in: path
+        name: sizeId
+        required: true
+        type: string
+      - description: Store ID
+        in: path
+        name: storeId
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/web.WebResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/web.WebResponse'
+      security:
+      - BearerAuth: []
+      summary: Delete Size from the store
+      tags:
+      - Size
+    get:
+      consumes:
+      - application/json
+      description: FindById Size from the store
+      parameters:
+      - description: Size ID
+        in: path
+        name: sizeId
+        required: true
+        type: string
+      - description: Store ID
+        in: path
+        name: storeId
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/web.WebResponse'
+            - properties:
+                data:
+                  $ref: '#/definitions/models.SizeResponse'
+              type: object
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/web.WebResponse'
+      security:
+      - BearerAuth: []
+      summary: FindById Size from the store
+      tags:
+      - Size
+    put:
+      consumes:
+      - application/json
+      description: Update Size from the store
+      parameters:
+      - description: Size Update
+        in: body
+        name: Size
+        required: true
+        schema:
+          $ref: '#/definitions/models.SizeUpdate'
+      - description: Size ID
+        in: path
+        name: sizeId
+        required: true
+        type: string
+      - description: Store ID
+        in: path
+        name: storeId
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/web.WebResponse'
+            - properties:
+                data:
+                  $ref: '#/definitions/models.SizeResponse'
+              type: object
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/web.WebResponse'
+      security:
+      - BearerAuth: []
+      summary: Update Size from the store
+      tags:
+      - Size
   /api/login:
     post:
       consumes:

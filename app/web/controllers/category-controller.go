@@ -28,6 +28,18 @@ func NewCategoryController(categoryService services.CategoryService) CategoryCon
 	}
 }
 
+// Create Category godoc
+// @Summary create Category for the store
+// @Description create Category for the store
+// @Tags Category
+// @Accept json
+// @Produce json
+// @Param category body models.CategoryCreate true "Category create"
+// @Param storeId path string true "Store ID"
+// @Success 200 {object} web.WebResponse{data=models.CategoryResponse}
+// @Failure 401 {object} web.WebResponse
+// @Router /api/{storeId}/categories [post]
+// @Security BearerAuth
 func (c *CategoryControllerImpl) Create(w http.ResponseWriter, r *http.Request) {
 	categoryCreateRequest := models.CategoryCreate{}
 	helpers.ToRequestBody(r, &categoryCreateRequest)
@@ -35,9 +47,7 @@ func (c *CategoryControllerImpl) Create(w http.ResponseWriter, r *http.Request) 
 	vars := mux.Vars(r)
 	storeId := vars["storeId"]
 
-	categoryCreateRequest.StoreID = storeId
-
-	categoryResponse := c.CategoryService.Create(r.Context(), categoryCreateRequest)
+	categoryResponse := c.CategoryService.Create(r.Context(), categoryCreateRequest, storeId)
 	webResponse := web.WebResponse{
 		Code:   http.StatusOK,
 		Status: "Ok",
@@ -47,6 +57,19 @@ func (c *CategoryControllerImpl) Create(w http.ResponseWriter, r *http.Request) 
 	helpers.WriteResponseBody(w, webResponse)
 }
 
+// Update Category godoc
+// @Summary Update Category for the store
+// @Description Update Category for the store
+// @Tags Category
+// @Accept json
+// @Produce json
+// @Param category body models.CategoryUpdate true "Category Update"
+// @Param storeId path string true "Store ID"
+// @Param categoryId path string true "Category ID"
+// @Success 200 {object} web.WebResponse{data=models.CategoryResponse}
+// @Failure 401 {object} web.WebResponse
+// @Router /api/{storeId}/categories/{categoryId} [put]
+// @Security BearerAuth
 func (c *CategoryControllerImpl) Update(w http.ResponseWriter, r *http.Request) {
 	categoryUpdateRequest := models.CategoryUpdate{}
 	helpers.ToRequestBody(r, &categoryUpdateRequest)
@@ -64,6 +87,18 @@ func (c *CategoryControllerImpl) Update(w http.ResponseWriter, r *http.Request) 
 	helpers.WriteResponseBody(w, webResponse)
 }
 
+// Delete Category godoc
+// @Summary Delete Category from the store
+// @Description Delete Category from the store
+// @Tags Category
+// @Accept json
+// @Produce json
+// @Param storeId path string true "Store ID"
+// @Param categoryId path string true "Category ID"
+// @Success 200 {object} web.WebResponse
+// @Failure 401 {object} web.WebResponse
+// @Router /api/{storeId}/categories/{categoryId} [delete]
+// @Security BearerAuth
 func (c *CategoryControllerImpl) Delete(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	categoryId := vars["categoryId"]
@@ -76,6 +111,18 @@ func (c *CategoryControllerImpl) Delete(w http.ResponseWriter, r *http.Request) 
 	helpers.WriteResponseBody(w, webResponse)
 }
 
+// FindById Category godoc
+// @Summary FindById Category from the store
+// @Description FindById Category from the store
+// @Tags Category
+// @Accept json
+// @Produce json
+// @Param storeId path string true "Store ID"
+// @Param categoryId path string true "Category ID"
+// @Success 200 {object} web.WebResponse{data=models.CategoryResponse}
+// @Failure 401 {object} web.WebResponse
+// @Router /api/{storeId}/categories/{categoryId} [get]
+// @Security BearerAuth
 func (c *CategoryControllerImpl) FindById(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	categoryId := vars["categoryId"]
@@ -89,6 +136,17 @@ func (c *CategoryControllerImpl) FindById(w http.ResponseWriter, r *http.Request
 	helpers.WriteResponseBody(w, webResponse)
 }
 
+// FindAll Categories godoc
+// @Summary FindAll Categories from the store
+// @Description FindAll Categories from the store
+// @Tags Category
+// @Accept json
+// @Produce json
+// @Param storeId path string true "Store ID"
+// @Success 200 {object} web.WebResponse{data=models.CategoryResponse}
+// @Failure 401 {object} web.WebResponse
+// @Router /api/{storeId}/categories [get]
+// @Security BearerAuth
 func (c *CategoryControllerImpl) FindAll(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	storeId := vars["storeId"]

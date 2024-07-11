@@ -19,8 +19,8 @@ type SizeServiceImpl struct {
 }
 
 type SizeService interface {
-	Create(ctx context.Context, request models.SizeCreate) models.SizeResponseHiddenStore
-	Update(ctx context.Context, request models.SizeUpdate, sizeId string) models.SizeResponseHiddenStore
+	Create(ctx context.Context, request models.SizeCreate, storeId string) models.SizeResponse
+	Update(ctx context.Context, request models.SizeUpdate, sizeId string) models.SizeResponse
 	Delete(ctx context.Context, sizeId string)
 	FindById(ctx context.Context, sizeId string) models.SizeResponse
 	FindAll(ctx context.Context, storeId string) []models.SizeResponse
@@ -34,7 +34,7 @@ func NewSizeService(sizeRepo repositories.SizeRepository, db *gorm.DB, validate 
 	}
 }
 
-func (s *SizeServiceImpl) Create(ctx context.Context, request models.SizeCreate) models.SizeResponseHiddenStore {
+func (s *SizeServiceImpl) Create(ctx context.Context, request models.SizeCreate, storeId string) models.SizeResponse {
 	err := s.Validate.Struct(request)
 	helpers.PanicIfError(err)
 
@@ -43,7 +43,7 @@ func (s *SizeServiceImpl) Create(ctx context.Context, request models.SizeCreate)
 
 	size := models.Size{
 		ID:      uuid.New().String(),
-		StoreID: request.StoreID,
+		StoreID: storeId,
 		Name:    request.Name,
 		Value:   request.Value,
 	}
@@ -51,10 +51,10 @@ func (s *SizeServiceImpl) Create(ctx context.Context, request models.SizeCreate)
 	data, err := s.SizeRepository.CreateSize(ctx, tx, size)
 	helpers.PanicIfError(err)
 
-	return models.ToSizeResponseHiddenStore(data)
+	return models.ToSizeResponse(data)
 }
 
-func (s *SizeServiceImpl) Update(ctx context.Context, request models.SizeUpdate, sizeId string) models.SizeResponseHiddenStore {
+func (s *SizeServiceImpl) Update(ctx context.Context, request models.SizeUpdate, sizeId string) models.SizeResponse {
 	err := s.Validate.Struct(request)
 	helpers.PanicIfError(err)
 
@@ -72,7 +72,7 @@ func (s *SizeServiceImpl) Update(ctx context.Context, request models.SizeUpdate,
 	data, err := s.SizeRepository.UpdateSize(ctx, tx, size)
 	helpers.PanicIfError(err)
 
-	return models.ToSizeResponseHiddenStore(data)
+	return models.ToSizeResponse(data)
 }
 
 func (s *SizeServiceImpl) Delete(ctx context.Context, sizeId string) {

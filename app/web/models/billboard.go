@@ -18,17 +18,6 @@ type Billboard struct {
 type BillboardResponse struct {
 	ID         string     `json:"id"`
 	StoreID    string     `json:"store_id"`
-	Store      Store      `json:"store"`
-	Label      string     `json:"label"`
-	ImageURL   string     `json:"image_url"`
-	Categories []Category `json:"categories"`
-	CreatedAt  time.Time  `json:"created_at"`
-	UpdatedAt  time.Time  `json:"updated_at"`
-}
-
-type BillboardResponseHiddenStore struct {
-	ID         string     `json:"id"`
-	StoreID    string     `json:"store_id"`
 	Label      string     `json:"label"`
 	ImageURL   string     `json:"image_url"`
 	Categories []Category `json:"categories"`
@@ -37,7 +26,6 @@ type BillboardResponseHiddenStore struct {
 }
 
 type BillboardCreate struct {
-	StoreID  string `json:"store_id"`
 	Label    string `json:"label" validate:"required,min=4,max=50"`
 	ImageURL string `json:"image_url" validate:"required"`
 }
@@ -53,31 +41,10 @@ func ToBillboardReponse(billboard Billboard) BillboardResponse {
 		Label:      billboard.Label,
 		StoreID:    billboard.StoreID,
 		ImageURL:   billboard.ImageURL,
-		Store:      billboard.Store,
 		Categories: billboard.Categories,
 		CreatedAt:  billboard.CreatedAt,
 		UpdatedAt:  billboard.UpdatedAt,
 	}
-}
-
-func ToBillboardResponseHiddenStore(billboard Billboard) BillboardResponseHiddenStore {
-	return BillboardResponseHiddenStore{
-		ID:         billboard.ID,
-		StoreID:    billboard.StoreID,
-		Label:      billboard.Label,
-		ImageURL:   billboard.ImageURL,
-		Categories: billboard.Categories,
-		CreatedAt:  billboard.CreatedAt,
-		UpdatedAt:  billboard.UpdatedAt,
-	}
-}
-func ToBillboardResponsesHiddenStore(billboards []Billboard) []BillboardResponseHiddenStore {
-	var responses []BillboardResponseHiddenStore
-
-	for _, billboard := range billboards {
-		responses = append(responses, ToBillboardResponseHiddenStore(billboard))
-	}
-	return responses
 }
 
 func ToBillboardResponses(billboards []Billboard) []BillboardResponse {

@@ -13,7 +13,7 @@ import (
 )
 
 type StoreService interface {
-	Create(ctx context.Context, request models.StoreCreate) models.StoreResponse
+	Create(ctx context.Context, request models.StoreCreate, userID string) models.StoreResponse
 	Update(ctx context.Context, request models.StoreUpdate, storeId string) models.StoreResponse
 	Delete(ctx context.Context, storeId string)
 	FindById(ctx context.Context, storeId string) models.StoreResponse
@@ -22,29 +22,37 @@ type StoreService interface {
 
 type StoreServiceImpl struct {
 	StoreRepository repositories.StoreRepository
+	UserRepository  repositories.UserRepository
 	DB              *gorm.DB
 	Validate        *validator.Validate
 }
 
-func NewStoreService(storeRepo repositories.StoreRepository, db *gorm.DB, validate *validator.Validate) StoreService {
+func NewStoreService(storeRepo repositories.StoreRepository, userRepo repositories.UserRepository, db *gorm.DB, validate *validator.Validate) StoreService {
 	return &StoreServiceImpl{
+		UserRepository:  userRepo,
 		StoreRepository: storeRepo,
 		DB:              db,
 		Validate:        validate,
 	}
 }
 
-func (s *StoreServiceImpl) Create(ctx context.Context, request models.StoreCreate) models.StoreResponse {
+func (s *StoreServiceImpl) Create(ctx context.Context, request models.StoreCreate, userID string) models.StoreResponse {
 	err := s.Validate.Struct(request)
 	helpers.PanicIfError(err)
 
 	tx := s.DB.Begin()
 	defer helpers.CommitOrRollback(tx)
 
+	user, err := s.UserRepository.GetUserById(ctx, tx, userID)
+	if err != nil {
+		panic(exceptions.NewNotFoundError(err.Error()))
+	}
+
 	store := models.Store{
 		ID:     uuid.New().String(),
 		Name:   request.Name,
-		UserID: request.UserID,
+		UserID: userID,
+		User:   user,
 	}
 
 	data, err := s.StoreRepository.CreateStore(ctx, tx, store)

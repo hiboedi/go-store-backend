@@ -61,11 +61,7 @@ func (r *BillboardRepositoryImpl) DeleteBillboard(ctx context.Context, db *gorm.
 func (r *BillboardRepositoryImpl) FindAllBillboards(ctx context.Context, db *gorm.DB, storeId string) ([]models.Billboard, error) {
 	var billboards []models.Billboard
 
-	err := db.WithContext(ctx).Model(&models.Billboard{}).Where("store_id = ?", storeId).Preload("Store", func(db *gorm.DB) *gorm.DB {
-		return db.Preload("User", func(db *gorm.DB) *gorm.DB {
-			return db.Omit("password", "email", "store")
-		})
-	}).Find(&billboards).Error
+	err := db.WithContext(ctx).Model(&models.Billboard{}).Where("store_id = ?", storeId).Find(&billboards).Error
 	helpers.PanicIfError(err)
 
 	return billboards, nil

@@ -19,8 +19,8 @@ type BillboardServiceImpl struct {
 }
 
 type BillboardService interface {
-	Create(ctx context.Context, request models.BillboardCreate) models.BillboardResponseHiddenStore
-	Update(ctx context.Context, request models.BillboardUpdate, billboardId string) models.BillboardResponseHiddenStore
+	Create(ctx context.Context, request models.BillboardCreate, storeId string) models.BillboardResponse
+	Update(ctx context.Context, request models.BillboardUpdate, billboardId string) models.BillboardResponse
 	Delete(ctx context.Context, billboardId string)
 	FindById(ctx context.Context, billboardId string) models.BillboardResponse
 	FindAll(ctx context.Context, storeId string) []models.BillboardResponse
@@ -34,7 +34,7 @@ func NewBillboardService(billboardRepo repositories.BillboardRepository, db *gor
 	}
 }
 
-func (s *BillboardServiceImpl) Create(ctx context.Context, request models.BillboardCreate) models.BillboardResponseHiddenStore {
+func (s *BillboardServiceImpl) Create(ctx context.Context, request models.BillboardCreate, storeId string) models.BillboardResponse {
 	err := s.Validate.Struct(request)
 	helpers.PanicIfError(err)
 
@@ -45,16 +45,16 @@ func (s *BillboardServiceImpl) Create(ctx context.Context, request models.Billbo
 		ID:       uuid.New().String(),
 		Label:    request.Label,
 		ImageURL: request.ImageURL,
-		StoreID:  request.StoreID,
+		StoreID:  storeId,
 	}
 
 	data, err := s.BillboardRepository.CreateBillboard(ctx, tx, billboard)
 	helpers.PanicIfError(err)
 
-	return models.ToBillboardResponseHiddenStore(data)
+	return models.ToBillboardReponse(data)
 }
 
-func (s *BillboardServiceImpl) Update(ctx context.Context, request models.BillboardUpdate, billboardId string) models.BillboardResponseHiddenStore {
+func (s *BillboardServiceImpl) Update(ctx context.Context, request models.BillboardUpdate, billboardId string) models.BillboardResponse {
 	err := s.Validate.Struct(request)
 	helpers.PanicIfError(err)
 
@@ -72,7 +72,7 @@ func (s *BillboardServiceImpl) Update(ctx context.Context, request models.Billbo
 	data, err := s.BillboardRepository.UpdateBillboard(ctx, tx, billboard)
 	helpers.PanicIfError(err)
 
-	return models.ToBillboardResponseHiddenStore(data)
+	return models.ToBillboardReponse(data)
 }
 
 func (s *BillboardServiceImpl) Delete(ctx context.Context, billboardId string) {

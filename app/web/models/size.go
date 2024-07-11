@@ -18,17 +18,6 @@ type Size struct {
 type SizeResponse struct {
 	ID        string    `json:"id"`
 	StoreID   string    `json:"store_id"`
-	Store     Store     `json:"store"`
-	Name      string    `json:"name"`
-	Value     string    `json:"value"`
-	Products  []Product `json:"products"`
-	CreatedAt time.Time `json:"created_at"`
-	UpdatedAt time.Time `json:"updated_at"`
-}
-
-type SizeResponseHiddenStore struct {
-	ID        string    `json:"id"`
-	StoreID   string    `json:"store_id"`
 	Name      string    `json:"name"`
 	Value     string    `json:"value"`
 	Products  []Product `json:"products"`
@@ -37,22 +26,13 @@ type SizeResponseHiddenStore struct {
 }
 
 type SizeCreate struct {
-	ID        string    `json:"id"`
-	StoreID   string    `json:"store_id"`
-	Name      string    `json:"name"`
-	Value     string    `json:"value"`
-	Products  []Product `json:"products"`
-	CreatedAt time.Time `json:"created_at"`
-	UpdatedAt time.Time `json:"updated_at"`
+	Name  string `json:"name"`
+	Value string `json:"value"`
 }
 
 type SizeUpdate struct {
-	StoreID   string    `json:"store_id"`
-	Name      string    `json:"name"`
-	Value     string    `json:"value"`
-	Products  []Product `json:"products"`
-	CreatedAt time.Time `json:"created_at"`
-	UpdatedAt time.Time `json:"updated_at"`
+	Name  string `json:"name"`
+	Value string `json:"value"`
 }
 
 func ToSizeResponse(size Size) SizeResponse {
@@ -65,27 +45,6 @@ func ToSizeResponse(size Size) SizeResponse {
 		CreatedAt: size.CreatedAt,
 		UpdatedAt: size.UpdatedAt,
 	}
-}
-
-func ToSizeResponseHiddenStore(size Size) SizeResponseHiddenStore {
-	return SizeResponseHiddenStore{
-		ID:        size.ID,
-		StoreID:   size.StoreID,
-		Name:      size.Name,
-		Value:     size.Value,
-		Products:  size.Products,
-		CreatedAt: size.CreatedAt,
-		UpdatedAt: size.UpdatedAt,
-	}
-}
-
-func ToSizeResponsesHiddenStore(sizes []Size) []SizeResponseHiddenStore {
-	var responses []SizeResponseHiddenStore
-
-	for _, size := range sizes {
-		responses = append(responses, ToSizeResponseHiddenStore(size))
-	}
-	return responses
 }
 
 func ToSizeResponses(sizes []Size) []SizeResponse {

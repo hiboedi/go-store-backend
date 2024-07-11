@@ -29,15 +29,26 @@ func NewProductController(productService services.ProductService) ProductControl
 	}
 }
 
+// Create Product godoc
+// @Summary create Product for the store
+// @Description create Product for the store
+// @Tags Product
+// @Accept json
+// @Produce json
+// @Param Product body models.ProductCreate true "Product create"
+// @Param storeId path string true "Store ID"
+// @Success 200 {object} web.WebResponse{data=models.ProductResponse}
+// @Failure 401 {object} web.WebResponse
+// @Router /api/{storeId}/products [post]
+// @Security BearerAuth
 func (c *ProductControllerImpl) Create(w http.ResponseWriter, r *http.Request) {
 	productCreateRequest := models.ProductCreate{}
 	helpers.ToRequestBody(r, &productCreateRequest)
 
 	vars := mux.Vars(r)
 	storeId := vars["storeId"]
-	productCreateRequest.StoreID = storeId
 
-	productResponse := c.ProductService.Create(r.Context(), productCreateRequest)
+	productResponse := c.ProductService.Create(r.Context(), productCreateRequest, storeId)
 	webResponse := web.WebResponse{
 		Code:   http.StatusOK,
 		Status: "Ok",
@@ -47,15 +58,25 @@ func (c *ProductControllerImpl) Create(w http.ResponseWriter, r *http.Request) {
 	helpers.WriteResponseBody(w, webResponse)
 }
 
+// Update Product godoc
+// @Summary Update Product from the store
+// @Description Update Product from the store
+// @Tags Product
+// @Accept json
+// @Produce json
+// @Param Product body models.ProductUpdate true "Product Update"
+// @Param storeId path string true "Store ID"
+// @Param productId path string true "Product ID"
+// @Success 200 {object} web.WebResponse{data=models.ProductResponse}
+// @Failure 401 {object} web.WebResponse
+// @Router /api/{storeId}/products/{productId} [put]
+// @Security BearerAuth
 func (c *ProductControllerImpl) Update(w http.ResponseWriter, r *http.Request) {
 	productUpdateRequest := models.ProductUpdate{}
 	helpers.ToRequestBody(r, &productUpdateRequest)
 
 	vars := mux.Vars(r)
 	productId := vars["productId"]
-
-	storeId := vars["storeId"]
-	productUpdateRequest.StoreID = storeId
 
 	productResponse := c.ProductService.Update(r.Context(), productUpdateRequest, productId)
 	webResponse := web.WebResponse{
@@ -67,6 +88,18 @@ func (c *ProductControllerImpl) Update(w http.ResponseWriter, r *http.Request) {
 	helpers.WriteResponseBody(w, webResponse)
 }
 
+// Delete Product godoc
+// @Summary Delete Product from the store
+// @Description Delete Product from the store
+// @Tags Product
+// @Accept json
+// @Produce json
+// @Param storeId path string true "Store ID"
+// @Param productId path string true "Product ID"
+// @Success 200 {object} web.WebResponse
+// @Failure 401 {object} web.WebResponse
+// @Router /api/{storeId}/products/{productId} [delete]
+// @Security BearerAuth
 func (c *ProductControllerImpl) Delete(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	productId := vars["productId"]
@@ -79,6 +112,18 @@ func (c *ProductControllerImpl) Delete(w http.ResponseWriter, r *http.Request) {
 	helpers.WriteResponseBody(w, webResponse)
 }
 
+// FindById Product godoc
+// @Summary FindById Product from the store
+// @Description FindById Product from the store
+// @Tags Product
+// @Accept json
+// @Produce json
+// @Param storeId path string true "Store ID"
+// @Param productId path string true "Product ID"
+// @Success 200 {object} web.WebResponse{data=models.ProductResponse}
+// @Failure 401 {object} web.WebResponse
+// @Router /api/{storeId}/products/{productId} [get]
+// @Security BearerAuth
 func (c *ProductControllerImpl) FindById(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	productId := vars["productId"]
@@ -92,6 +137,17 @@ func (c *ProductControllerImpl) FindById(w http.ResponseWriter, r *http.Request)
 	helpers.WriteResponseBody(w, webResponse)
 }
 
+// FindAll Products godoc
+// @Summary FindAll Products from the store
+// @Description FindAll Products from the store
+// @Tags Product
+// @Accept json
+// @Produce json
+// @Param storeId path string true "Store ID"
+// @Success 200 {object} web.WebResponse{data=models.ProductResponse}
+// @Failure 401 {object} web.WebResponse
+// @Router /api/{storeId}/products [get]
+// @Security BearerAuth
 func (c *ProductControllerImpl) FindAll(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	storeId := vars["storeId"]
